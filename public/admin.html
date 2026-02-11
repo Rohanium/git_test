@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — Upload Knowledge Base Data</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <nav>
+    <a href="/">Chat</a>
+    <a href="/admin.html" class="active">Admin — Upload Data</a>
+  </nav>
+
+  <main class="admin-container">
+    <h1>Upload Knowledge Base Data</h1>
+    <p>Add documents to your chatbot's knowledge base. Supported formats: plain text, .txt, .md, .csv</p>
+
+    <!-- Password -->
+    <div class="field">
+      <label for="password">Admin Password</label>
+      <input type="password" id="password" placeholder="Enter admin password" />
+    </div>
+
+    <!-- Tab switcher -->
+    <div class="tabs">
+      <button class="tab active" data-tab="file">Upload File</button>
+      <button class="tab" data-tab="paste">Paste Text</button>
+    </div>
+
+    <!-- File upload -->
+    <div id="tab-file" class="tab-content active">
+      <div class="field">
+        <label for="file-title">Document Title (optional)</label>
+        <input type="text" id="file-title" placeholder="e.g. Product FAQ" />
+      </div>
+      <div class="field">
+        <label for="file-input">Choose File</label>
+        <input type="file" id="file-input" accept=".txt,.md,.csv,.text" />
+      </div>
+      <button id="upload-file-btn" class="primary">Upload File</button>
+    </div>
+
+    <!-- Paste text -->
+    <div id="tab-paste" class="tab-content">
+      <div class="field">
+        <label for="paste-title">Document Title</label>
+        <input type="text" id="paste-title" placeholder="e.g. Company Policies" />
+      </div>
+      <div class="field">
+        <label for="paste-text">Paste your content</label>
+        <textarea id="paste-text" rows="12" placeholder="Paste your knowledge base text here..."></textarea>
+      </div>
+      <button id="upload-paste-btn" class="primary">Upload Text</button>
+    </div>
+
+    <!-- Status -->
+    <div id="status" class="status"></div>
+
+    <!-- Document list -->
+    <h2>Uploaded Documents</h2>
+    <div id="doc-list" class="doc-list">
+      <p class="muted">Loading...</p>
+    </div>
+  </main>
+
+  <script>
+    // Tab switching
+    document.querySelectorAll(".tab").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        document.querySelectorAll(".tab").forEach((t) => t.classList.remove("active"));
+        document.querySelectorAll(".tab-content").forEach((c) => c.classList.remove("active"));
+        tab.classList.add("active");
+        document.getElementById(`tab-${tab.dataset.tab}`).classList.add("active");
+      });
+    });
+
+    const statusEl = document.getElementById("status");
+
+    function showStatus(msg, type = "info") {
+      statusEl.textContent = msg;
+      statusEl.className = `status ${type}`;
+    }
+
+    function getPassword() {
+      return document.getElementById("password").value;
+    }
+
+    // Upload file
+    document.getElementById("upload-file-btn").addEventListener("click", async () => {
+      const fileInput = document.getElementById("file-input");
+      const file = fileInput.files[0];
+      if (!file) return showStatus("Please select a file.", "error");
+
+      const form = new FormData();
+      form.append("file", file);
+      const title = document.getElementById("file-title").value;
+      if (title) form.append("title", title);
+
+      showStatus("Uploading and processing...", "info");
+
+      try {
+        const res = await fetch("/.netlify/functions/upload", {
+          method: "POST",
+          headers: { "x-admin-password": getPassword() },
+          body: form,
+        });
+        const data = await res.json();
+        if (res.ok) {
+          showStatus(`Uploaded "${data.document}" — ${data.chunks} chunks created.`, "success");
+          loadDocuments();
+        } else {
+          showStatus(data.error || "Upload failed.", "error");
+        }
+      } catch {
+        showStatus("Network error.", "error");
+      }
+    });
+
+    // Upload pasted text
+    document.getElementById("upload-paste-btn").addEventListener("click", async () => {
+      const title = document.getElementById("paste-title").value;
+      const text = document.getElementById("paste-text").value;
+      if (!text.trim()) return showStatus("Please paste some text.", "error");
+
+      showStatus("Uploading and processing...", "info");
+
+      try {
+        const res = await fetch("/.netlify/functions/upload", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-admin-password": getPassword(),
+          },
+          body: JSON.stringify({ title: title || "Pasted text", text }),
+        });
+        const data = await res.json();
+        if (res.ok) {
+          showStatus(`Uploaded "${data.document}" — ${data.chunks} chunks created.`, "success");
+          document.getElementById("paste-text").value = "";
+          loadDocuments();
+        } else {
+          showStatus(data.error || "Upload failed.", "error");
+        }
+      } catch {
+        showStatus("Network error.", "error");
+      }
+    });
+
+    // Load document list
+    async function loadDocuments() {
+      const listEl = document.getElementById("doc-list");
+      try {
+        const res = await fetch("/.netlify/functions/documents");
+        const data = await res.json();
+        if (data.documents.length === 0) {
+          listEl.innerHTML = '<p class="muted">No documents uploaded yet.</p>';
+          return;
+        }
+        listEl.innerHTML = data.documents
+          .map(
+            (d) =>
+              `<div class="doc-item">
+                <strong>${escapeHtml(d.name)}</strong>
+                <span>${d.chunks} chunks</span>
+                <span class="muted">${new Date(d.uploadedAt).toLocaleDateString()}</span>
+              </div>`
+          )
+          .join("");
+      } catch {
+        listEl.innerHTML = '<p class="muted">Could not load documents.</p>';
+      }
+    }
+
+    function escapeHtml(str) {
+      const d = document.createElement("div");
+      d.textContent = str;
+      return d.innerHTML;
+    }
+
+    loadDocuments();
+  </script>
+</body>
+</html>

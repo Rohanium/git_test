@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Knowledge Base Chatbot</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <nav>
+    <a href="/" class="active">Chat</a>
+    <a href="/admin.html">Admin — Upload Data</a>
+  </nav>
+
+  <main class="chat-container">
+    <div id="messages" class="messages">
+      <div class="message bot">
+        <strong>Bot:</strong> Hi! Ask me anything about the uploaded knowledge base.
+      </div>
+    </div>
+
+    <form id="chat-form" class="chat-input">
+      <input
+        type="text"
+        id="user-input"
+        placeholder="Type your question..."
+        autocomplete="off"
+        required
+      />
+      <button type="submit" id="send-btn">Send</button>
+    </form>
+  </main>
+
+  <script>
+    const messagesEl = document.getElementById("messages");
+    const form = document.getElementById("chat-form");
+    const input = document.getElementById("user-input");
+    const sendBtn = document.getElementById("send-btn");
+
+    const history = [];
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const message = input.value.trim();
+      if (!message) return;
+
+      appendMessage("user", message);
+      input.value = "";
+      sendBtn.disabled = true;
+      sendBtn.textContent = "...";
+
+      try {
+        const res = await fetch("/.netlify/functions/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message, history }),
+        });
+        const data = await res.json();
+
+        if (data.reply) {
+          history.push({ role: "user", content: message });
+          history.push({ role: "assistant", content: data.reply });
+          appendMessage("bot", data.reply, data.sources);
+        } else {
+          appendMessage("bot", "Sorry, something went wrong.");
+        }
+      } catch {
+        appendMessage("bot", "Network error. Please try again.");
+      } finally {
+        sendBtn.disabled = false;
+        sendBtn.textContent = "Send";
+        input.focus();
+      }
+    });
+
+    function appendMessage(role, text, sources) {
+      const div = document.createElement("div");
+      div.className = `message ${role}`;
+      const label = role === "user" ? "You" : "Bot";
+      div.innerHTML = `<strong>${label}:</strong> ${escapeHtml(text)}`;
+
+      if (sources && sources.length > 0) {
+        const srcEl = document.createElement("div");
+        srcEl.className = "sources";
+        srcEl.innerHTML =
+          "<small>Sources: " +
+          sources.map((s) => `${escapeHtml(s.document)} (${s.score})`).join(", ") +
+          "</small>";
+        div.appendChild(srcEl);
+      }
+
+      messagesEl.appendChild(div);
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    function escapeHtml(str) {
+      const d = document.createElement("div");
+      d.textContent = str;
+      return d.innerHTML;
+    }
+  </script>
+</body>
+</html>

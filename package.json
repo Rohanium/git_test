@@ -9,7 +9,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
     "@netlify/functions": "^2.8.0",
-    "@pinecone-database/pinecone": "^4.0.0",
+    "@pinecone-database/pinecone": "^7.0.0",
     "busboy": "^1.6.0"
   }
 }

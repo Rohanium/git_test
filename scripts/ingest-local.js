@@ -46,9 +46,14 @@ async function ingestFile(filePath) {
     uploadedAt: new Date().toISOString(),
   }));
 
-  // Pinecone integrated embeddings: max 96 records per batch
-  for (let i = 0; i < records.length; i += 96) {
-    await index.upsertRecords({ records: records.slice(i, i + 96) });
+  // Pinecone integrated embeddings: use small batches with delays
+  // to stay under the free tier rate limit (250k tokens/min)
+  const BATCH_SIZE = 10;
+  for (let i = 0; i < records.length; i += BATCH_SIZE) {
+    await index.upsertRecords({ records: records.slice(i, i + BATCH_SIZE) });
+    if (i + BATCH_SIZE < records.length) {
+      await new Promise((r) => setTimeout(r, 2000));
+    }
   }
 
   console.log(`  -> Uploaded to Pinecone.`);

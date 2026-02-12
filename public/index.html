@@ -3,33 +3,41 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Knowledge Base Chatbot</title>
+  <title>SRJ Knowledge Base</title>
   <link rel="stylesheet" href="/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
-  <nav>
-    <a href="/" class="active">Chat</a>
-    <a href="/admin.html">Admin</a>
-  </nav>
+  <header class="chat-header">
+    <div class="header-left">
+      <div class="logo">S</div>
+      <span class="header-title">Knowledge Base</span>
+    </div>
+    <div class="header-right">
+      <a href="/admin.html" class="header-link">Admin</a>
+      <button id="new-chat-btn" class="new-chat-btn">New Chat</button>
+    </div>
+  </header>
 
   <main class="chat-container">
     <div id="messages" class="messages">
       <div class="message bot">
-        <span class="label">Bot</span>
-        <div class="bubble">Hi! Ask me anything about the uploaded knowledge base.</div>
+        <div class="msg-content">Hi! Ask me anything about the uploaded knowledge base.</div>
       </div>
     </div>
 
-    <form id="chat-form" class="chat-input">
-      <input
-        type="text"
-        id="user-input"
-        placeholder="Ask a question..."
-        autocomplete="off"
-        required
-      />
-      <button type="submit" id="send-btn">Send</button>
-    </form>
+    <div class="chat-input-wrap">
+      <form id="chat-form" class="chat-input">
+        <input
+          type="text"
+          id="user-input"
+          placeholder="Type your message..."
+          autocomplete="off"
+          required
+        />
+        <button type="submit" id="send-btn">Send</button>
+      </form>
+    </div>
   </main>
 
   <script>
@@ -39,6 +47,16 @@
     const sendBtn = document.getElementById("send-btn");
 
     const history = [];
+
+    // New chat button
+    document.getElementById("new-chat-btn").addEventListener("click", () => {
+      history.length = 0;
+      messagesEl.innerHTML = `
+        <div class="message bot">
+          <div class="msg-content">Hi! Ask me anything about the uploaded knowledge base.</div>
+        </div>`;
+      input.focus();
+    });
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -78,16 +96,16 @@
       const div = document.createElement("div");
       div.className = `message ${role}`;
 
-      const label = document.createElement("span");
-      label.className = "label";
-      label.textContent = role === "user" ? "You" : "Bot";
+      const content = document.createElement("div");
+      content.className = "msg-content";
 
-      const bubble = document.createElement("div");
-      bubble.className = "bubble";
-      bubble.textContent = text;
+      if (role === "bot") {
+        content.innerHTML = marked.parse(text);
+      } else {
+        content.textContent = text;
+      }
 
-      div.appendChild(label);
-      div.appendChild(bubble);
+      div.appendChild(content);
       messagesEl.appendChild(div);
       messagesEl.scrollTop = messagesEl.scrollHeight;
     }

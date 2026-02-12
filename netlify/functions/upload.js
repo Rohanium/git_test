@@ -75,7 +75,7 @@ exports.handler = async (event) => {
     console.error("Upload error:", err);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: "Failed to process upload" }),
+      body: JSON.stringify({ error: err.message || "Failed to process upload" }),
     };
   }
 };

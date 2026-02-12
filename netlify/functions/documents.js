@@ -57,7 +57,7 @@ exports.handler = async (event) => {
     console.error("Documents list error:", err);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: "Failed to list documents" }),
+      body: JSON.stringify({ error: err.message || "Failed to list documents" }),
     };
   }
 };

@@ -68,7 +68,7 @@ exports.handler = async (event) => {
     console.error("Chat error:", err);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: "Internal server error" }),
+      body: JSON.stringify({ error: err.message || "Internal server error" }),
     };
   }
 };

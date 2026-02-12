@@ -60,7 +60,6 @@
         if (data.reply) {
           history.push({ role: "user", content: message });
           history.push({ role: "assistant", content: data.reply });
-          window._lastDebug = data.debug;
           appendMessage("bot", data.reply, data.sources);
         } else {
           appendMessage("bot", "Error: " + (data.error || "Something went wrong."));
@@ -89,14 +88,6 @@
           "</small>";
         div.appendChild(srcEl);
       }
-      // Show debug info if present (temporary)
-      if (window._lastDebug) {
-        const dbg = document.createElement("div");
-        dbg.className = "sources";
-        dbg.innerHTML = "<small>Debug: " + escapeHtml(JSON.stringify(window._lastDebug)) + "</small>";
-        div.appendChild(dbg);
-      }
-
       messagesEl.appendChild(div);
       messagesEl.scrollTop = messagesEl.scrollHeight;
     }

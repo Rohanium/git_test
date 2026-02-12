@@ -24,18 +24,12 @@ exports.handler = async (event) => {
       fields: ["text", "document"],
     });
 
-    // Debug: log the raw search response structure
-    console.log("searchResponse keys:", JSON.stringify(Object.keys(searchResponse)));
-    console.log("searchResponse preview:", JSON.stringify(searchResponse).slice(0, 500));
-
-    const hits = (searchResponse.result?.hits || searchResponse.hits || []).filter(
-      (h) => (h._score || h.score || 0) > 0.3
-    );
-
-    console.log("hits count:", hits.length);
+    // llama-text-embed-v2 produces lower scores than OpenAI embeddings,
+    // so use a low threshold to avoid filtering out relevant results
+    const hits = (searchResponse.result?.hits || []).filter((h) => h._score > 0.05);
 
     const context = hits
-      .map((h) => h.fields?.text || h.metadata?.text || "")
+      .map((h) => h.fields?.text)
       .filter(Boolean)
       .join("\n\n---\n\n");
 
@@ -67,14 +61,9 @@ exports.handler = async (event) => {
       body: JSON.stringify({
         reply,
         sources: hits.map((h) => ({
-          document: h.fields?.document || h.metadata?.document || "unknown",
-          score: Math.round((h._score || h.score || 0) * 100) / 100,
+          document: h.fields?.document || "unknown",
+          score: Math.round(h._score * 100) / 100,
         })),
-        debug: {
-          responseKeys: Object.keys(searchResponse),
-          hitCount: hits.length,
-          rawPreview: JSON.stringify(searchResponse).slice(0, 300),
-        },
       }),
     };
   } catch (err) {

@@ -1,5 +1,4 @@
 const Anthropic = require("@anthropic-ai/sdk");
-const { embedText } = require("../../lib/embeddings");
 const { getIndex } = require("../../lib/pinecone");
 
 const anthropic = new Anthropic();
@@ -15,35 +14,36 @@ exports.handler = async (event) => {
       return { statusCode: 400, body: JSON.stringify({ error: "message is required" }) };
     }
 
-    // 1. Embed the user's question
-    const queryVector = await embedText(message);
-
-    // 2. Search Pinecone for relevant chunks
+    // 1. Search Pinecone using integrated embeddings (text query)
     const index = getIndex();
-    const results = await index.query({
-      vector: queryVector,
-      topK: 5,
-      includeMetadata: true,
+    const searchResponse = await index.searchRecords({
+      query: {
+        inputs: { text: message },
+        topK: 5,
+      },
+      fields: ["text", "document"],
     });
 
-    const context = results.matches
-      .filter((m) => m.score > 0.3)
-      .map((m) => m.metadata.text)
+    const hits = (searchResponse.result?.hits || []).filter((h) => h._score > 0.3);
+
+    const context = hits
+      .map((h) => h.fields?.text)
+      .filter(Boolean)
       .join("\n\n---\n\n");
 
-    // 3. Build the prompt with retrieved context
+    // 2. Build the prompt with retrieved context
     const systemPrompt = context
       ? `You are a helpful assistant. Answer the user's question using ONLY the context below. If the context doesn't contain enough information, say so honestly.\n\n<context>\n${context}\n</context>`
       : "You are a helpful assistant. No knowledge base documents have been uploaded yet, so let the user know they can add information via the Admin page.";
 
-    // 4. Convert chat history to Claude message format
+    // 3. Convert chat history to Claude message format
     const messages = [];
     for (const msg of history.slice(-10)) {
       messages.push({ role: msg.role, content: msg.content });
     }
     messages.push({ role: "user", content: message });
 
-    // 5. Call Claude
+    // 4. Call Claude
     const response = await anthropic.messages.create({
       model: "claude-sonnet-4-5-20250929",
       max_tokens: 1024,
@@ -58,12 +58,10 @@ exports.handler = async (event) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         reply,
-        sources: results.matches
-          .filter((m) => m.score > 0.3)
-          .map((m) => ({
-            document: m.metadata.document || "unknown",
-            score: Math.round(m.score * 100) / 100,
-          })),
+        sources: hits.map((h) => ({
+          document: h.fields?.document || "unknown",
+          score: Math.round(h._score * 100) / 100,
+        })),
       }),
     };
   } catch (err) {

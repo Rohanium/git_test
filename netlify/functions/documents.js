@@ -2,8 +2,8 @@ const { getIndex } = require("../../lib/pinecone");
 
 /**
  * Lists distinct documents in the knowledge base.
- * Uses a zero-vector query with a large topK to sample stored records,
- * then extracts unique document names from metadata.
+ * Uses a broad searchRecords query to sample stored records,
+ * then extracts unique document names from the results.
  */
 exports.handler = async (event) => {
   if (event.httpMethod !== "GET") {
@@ -13,29 +13,33 @@ exports.handler = async (event) => {
   try {
     const index = getIndex();
 
-    // Query with a zero vector to get a sample of all records
-    const zeroVector = new Array(1536).fill(0);
-    const results = await index.query({
-      vector: zeroVector,
-      topK: 1000,
-      includeMetadata: true,
+    // Use searchRecords with a generic query to retrieve stored records
+    const searchResponse = await index.searchRecords({
+      query: {
+        inputs: { text: "document" },
+        topK: 1000,
+      },
+      fields: ["document", "uploadedAt", "chunkIndex"],
     });
+
+    const hits = searchResponse.result?.hits || [];
 
     // Aggregate unique documents with their chunk counts
     const docMap = new Map();
-    for (const match of results.matches) {
-      const doc = match.metadata.document || "unknown";
+    for (const hit of hits) {
+      const doc = hit.fields?.document || "unknown";
       const existing = docMap.get(doc);
       if (existing) {
         existing.chunks += 1;
-        if (match.metadata.uploadedAt > existing.uploadedAt) {
-          existing.uploadedAt = match.metadata.uploadedAt;
+        const uploadedAt = hit.fields?.uploadedAt || "";
+        if (uploadedAt > existing.uploadedAt) {
+          existing.uploadedAt = uploadedAt;
         }
       } else {
         docMap.set(doc, {
           name: doc,
           chunks: 1,
-          uploadedAt: match.metadata.uploadedAt || "unknown",
+          uploadedAt: hit.fields?.uploadedAt || "unknown",
         });
       }
     }

@@ -6,8 +6,10 @@
  * Usage:
  *   node scripts/ingest-local.js path/to/file1.txt path/to/file2.md ...
  *
- * Requires OPENAI_API_KEY, PINECONE_API_KEY, and PINECONE_INDEX env vars
+ * Requires PINECONE_API_KEY and PINECONE_INDEX env vars
  * (load via .env file or export them).
+ *
+ * Uses Pinecone integrated embeddings — text is embedded automatically on upsert.
  */
 
 require("dotenv/config");
@@ -15,7 +17,6 @@ require("dotenv/config");
 const fs = require("fs");
 const path = require("path");
 const { chunkText } = require("../lib/chunker");
-const { embedBatch } = require("../lib/embeddings");
 const { getIndex } = require("../lib/pinecone");
 
 function slugify(str) {
@@ -35,22 +36,19 @@ async function ingestFile(filePath) {
   const chunks = chunkText(text);
   console.log(`  -> ${chunks.length} chunks`);
 
-  const vectors = await embedBatch(chunks);
   const index = getIndex();
 
   const records = chunks.map((chunk, i) => ({
     id: `${slugify(name)}-${i}-${Date.now()}`,
-    values: vectors[i],
-    metadata: {
-      text: chunk,
-      document: name,
-      chunkIndex: i,
-      uploadedAt: new Date().toISOString(),
-    },
+    text: chunk,
+    document: name,
+    chunkIndex: i,
+    uploadedAt: new Date().toISOString(),
   }));
 
-  for (let i = 0; i < records.length; i += 100) {
-    await index.upsert(records.slice(i, i + 100));
+  // Pinecone integrated embeddings: max 96 records per batch
+  for (let i = 0; i < records.length; i += 96) {
+    await index.upsertRecords(records.slice(i, i + 96));
   }
 
   console.log(`  -> Uploaded to Pinecone.`);

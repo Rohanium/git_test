@@ -1,6 +1,5 @@
 const busboy = require("busboy");
 const { chunkText } = require("../../lib/chunker");
-const { embedBatch } = require("../../lib/embeddings");
 const { getIndex } = require("../../lib/pinecone");
 
 /**
@@ -9,6 +8,7 @@ const { getIndex } = require("../../lib/pinecone");
  *   - OR JSON body with { "title": "...", "text": "..." }
  *
  * Protected by ADMIN_PASSWORD (sent as x-admin-password header).
+ * Uses Pinecone integrated embeddings — text is embedded automatically on upsert.
  */
 exports.handler = async (event) => {
   if (event.httpMethod !== "POST") {
@@ -45,25 +45,21 @@ exports.handler = async (event) => {
     // 1. Chunk the document
     const chunks = chunkText(text);
 
-    // 2. Embed all chunks
-    const vectors = await embedBatch(chunks);
-
-    // 3. Upsert into Pinecone
+    // 2. Upsert into Pinecone using integrated embeddings
+    //    Records contain a "text" field matching the index field_map,
+    //    so Pinecone embeds them automatically.
     const index = getIndex();
     const records = chunks.map((chunk, i) => ({
       id: `${slugify(title)}-${i}-${Date.now()}`,
-      values: vectors[i],
-      metadata: {
-        text: chunk,
-        document: title,
-        chunkIndex: i,
-        uploadedAt: new Date().toISOString(),
-      },
+      text: chunk,
+      document: title,
+      chunkIndex: i,
+      uploadedAt: new Date().toISOString(),
     }));
 
-    // Pinecone upsert in batches of 100
-    for (let i = 0; i < records.length; i += 100) {
-      await index.upsert(records.slice(i, i + 100));
+    // Pinecone integrated embeddings: max 96 records per batch
+    for (let i = 0; i < records.length; i += 96) {
+      await index.upsertRecords(records.slice(i, i + 96));
     }
 
     return {

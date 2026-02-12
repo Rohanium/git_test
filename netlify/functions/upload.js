@@ -59,7 +59,7 @@ exports.handler = async (event) => {
 
     // Pinecone integrated embeddings: max 96 records per batch
     for (let i = 0; i < records.length; i += 96) {
-      await index.upsertRecords(records.slice(i, i + 96));
+      await index.upsertRecords({ records: records.slice(i, i + 96) });
     }
 
     return {

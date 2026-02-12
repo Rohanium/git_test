@@ -35,8 +35,8 @@ exports.handler = async (event) => {
 
     // 2. Build the prompt with retrieved context
     const systemPrompt = context
-      ? `You are a helpful assistant. Answer the user's question using ONLY the context below. If the context doesn't contain enough information, say so honestly.\n\n<context>\n${context}\n</context>`
-      : "You are a helpful assistant. No knowledge base documents have been uploaded yet, so let the user know they can add information via the Admin page.";
+      ? `You are a knowledgeable assistant. Give direct, concise answers based ONLY on the context below. No filler, no preamble — get straight to the point. If the context doesn't cover the question, say so briefly.\n\n<context>\n${context}\n</context>`
+      : "You are a helpful assistant. The knowledge base is empty — let the user know they can upload documents via the Admin page.";
 
     // 3. Convert chat history to Claude message format
     const messages = [];

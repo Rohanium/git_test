@@ -9,13 +9,14 @@
 <body>
   <nav>
     <a href="/" class="active">Chat</a>
-    <a href="/admin.html">Admin — Upload Data</a>
+    <a href="/admin.html">Admin</a>
   </nav>
 
   <main class="chat-container">
     <div id="messages" class="messages">
       <div class="message bot">
-        <strong>Bot:</strong> Hi! Ask me anything about the uploaded knowledge base.
+        <span class="label">Bot</span>
+        <div class="bubble">Hi! Ask me anything about the uploaded knowledge base.</div>
       </div>
     </div>
 
@@ -23,7 +24,7 @@
       <input
         type="text"
         id="user-input"
-        placeholder="Type your question..."
+        placeholder="Ask a question..."
         autocomplete="off"
         required
       />
@@ -60,7 +61,7 @@
         if (data.reply) {
           history.push({ role: "user", content: message });
           history.push({ role: "assistant", content: data.reply });
-          appendMessage("bot", data.reply, data.sources);
+          appendMessage("bot", data.reply);
         } else {
           appendMessage("bot", "Error: " + (data.error || "Something went wrong."));
         }
@@ -73,29 +74,22 @@
       }
     });
 
-    function appendMessage(role, text, sources) {
+    function appendMessage(role, text) {
       const div = document.createElement("div");
       div.className = `message ${role}`;
-      const label = role === "user" ? "You" : "Bot";
-      div.innerHTML = `<strong>${label}:</strong> ${escapeHtml(text)}`;
 
-      if (sources && sources.length > 0) {
-        const srcEl = document.createElement("div");
-        srcEl.className = "sources";
-        srcEl.innerHTML =
-          "<small>Sources: " +
-          sources.map((s) => `${escapeHtml(s.document)} (${s.score})`).join(", ") +
-          "</small>";
-        div.appendChild(srcEl);
-      }
+      const label = document.createElement("span");
+      label.className = "label";
+      label.textContent = role === "user" ? "You" : "Bot";
+
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+      bubble.textContent = text;
+
+      div.appendChild(label);
+      div.appendChild(bubble);
       messagesEl.appendChild(div);
       messagesEl.scrollTop = messagesEl.scrollHeight;
-    }
-
-    function escapeHtml(str) {
-      const d = document.createElement("div");
-      d.textContent = str;
-      return d.innerHTML;
     }
   </script>
 </body>

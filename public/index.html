@@ -62,7 +62,7 @@
           history.push({ role: "assistant", content: data.reply });
           appendMessage("bot", data.reply, data.sources);
         } else {
-          appendMessage("bot", "Sorry, something went wrong.");
+          appendMessage("bot", "Error: " + (data.error || "Something went wrong."));
         }
       } catch {
         appendMessage("bot", "Network error. Please try again.");

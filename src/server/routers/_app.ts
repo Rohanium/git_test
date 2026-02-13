@@ -9,6 +9,8 @@ import { qualityRouter } from "./quality";
 import { deliveryRouter } from "./delivery";
 import { hrRouter } from "./hr";
 import { reportsRouter } from "./reports";
+import { projectsRouter } from "./projects";
+import { capacityRouter } from "./capacity";
 
 export const appRouter = createTRPCRouter({
   crm: crmRouter,
@@ -21,6 +23,8 @@ export const appRouter = createTRPCRouter({
   delivery: deliveryRouter,
   hr: hrRouter,
   reports: reportsRouter,
+  projects: projectsRouter,
+  capacity: capacityRouter,
 });
 
 export type AppRouter = typeof appRouter;

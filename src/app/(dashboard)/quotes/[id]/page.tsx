@@ -74,6 +74,12 @@ export default function QuoteDetailPage() {
             <Badge variant={statusVariant[quote.status] ?? "secondary"} className="text-sm">
               {quote.status}
             </Badge>
+            <Button
+              variant="outline"
+              onClick={() => window.open(`/api/quotes/${quote.id}/pdf`, "_blank")}
+            >
+              Preview PDF
+            </Button>
             <Button variant="outline" onClick={() => setShowAddItem(true)}>
               + Add Item
             </Button>

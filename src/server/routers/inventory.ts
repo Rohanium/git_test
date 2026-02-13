@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure, roleRestrictedProcedure } from "../trpc";
+import { allocateMaterialsForJob, generatePurchaseOrderFromShortfalls } from "../services/material-allocation";
 
 export const inventoryRouter = createTRPCRouter({
   // ── Materials ─────────────────────────────────────────────
@@ -172,6 +173,51 @@ export const inventoryRouter = createTRPCRouter({
       orderBy: { company: { name: "asc" } },
     });
   }),
+
+  // ── Material Allocation ────────────────────────────────────
+  allocateMaterials: roleRestrictedProcedure("ADMIN", "WORKSHOP_MANAGER")
+    .input(
+      z.object({
+        jobId: z.string(),
+        requirements: z.array(
+          z.object({
+            materialId: z.string(),
+            quantity: z.number().positive(),
+          })
+        ),
+        autoGeneratePOs: z.boolean().default(false),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const result = await allocateMaterialsForJob(
+        ctx.db as any,
+        input.jobId,
+        input.requirements
+      );
+
+      let generatedPOs: string[] = [];
+      if (input.autoGeneratePOs && result.shortfalls.length > 0) {
+        generatedPOs = await generatePurchaseOrderFromShortfalls(
+          ctx.db as any,
+          result.shortfalls
+        );
+      }
+
+      return {
+        ...result,
+        generatedPOs,
+      };
+    }),
+
+  getJobAllocations: protectedProcedure
+    .input(z.string())
+    .query(async ({ ctx, input: jobId }) => {
+      return ctx.db.materialAllocation.findMany({
+        where: { jobId },
+        include: { material: true },
+        orderBy: { createdAt: "desc" },
+      });
+    }),
 
   // ── Stock Summary ─────────────────────────────────────────
   stockSummary: protectedProcedure.query(async ({ ctx }) => {

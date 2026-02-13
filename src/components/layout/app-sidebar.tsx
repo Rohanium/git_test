@@ -20,6 +20,11 @@ const navigation = [
     ],
   },
   {
+    label: "Projects",
+    href: "/projects",
+    icon: "FolderKanban",
+  },
+  {
     label: "Quotes",
     href: "/quotes",
     icon: "FileText",
@@ -40,8 +45,10 @@ const navigation = [
       { label: "Dashboard", href: "/production/dashboard" },
       { label: "Jobs", href: "/production/jobs" },
       { label: "Schedule", href: "/production/schedule" },
+      { label: "Capacity", href: "/production/capacity" },
       { label: "Work Orders", href: "/production/work-orders" },
       { label: "Workstations", href: "/production/workstations" },
+      { label: "Time Clock", href: "/production/time-clock" },
     ],
   },
   {
@@ -117,7 +124,7 @@ export function AppSidebar() {
                       {item.label}
                     </div>
                     <ul className="space-y-0.5">
-                      {item.items.map((subItem) => (
+                      {item.items?.map((subItem) => (
                         <li key={subItem.href}>
                           <Link
                             href={subItem.href}

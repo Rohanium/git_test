@@ -467,6 +467,193 @@ async function main() {
     ],
   });
 
+  // ── Projects ────────────────────────────────────────────
+  const project1 = await prisma.project.create({
+    data: {
+      projectNumber: "PRJ-2026-0001",
+      name: "Smith Kitchen Renovation",
+      description: "Full kitchen renovation including island bench, pantry, and appliance housing. Modern design with 2-pack paint finish and engineered stone benchtops.",
+      status: "IN_PRODUCTION",
+      priority: "HIGH",
+      projectType: "KITCHEN",
+      startDate: new Date("2026-01-20"),
+      targetDate: new Date("2026-04-15"),
+      siteAddress: "42 Rimu Street",
+      siteCity: "Auckland",
+      sitePostcode: "1010",
+      siteNotes: "Ground floor kitchen. Good vehicle access via driveway. Existing kitchen to be demolished by builder before install.",
+      totalBudget: 52000,
+      totalQuoted: 48875,
+      totalInvoiced: 14662.50,
+      totalPaid: 14662.50,
+      companyId: smithFamily.id,
+      contactId: johnSmith.id,
+      managedById: salesRep.id,
+    },
+  });
+
+  const project2 = await prisma.project.create({
+    data: {
+      projectNumber: "PRJ-2026-0002",
+      name: "Brown Master Wardrobe",
+      description: "Walk-in wardrobe with hanging, shelving, drawers, and LED lighting. Warm walnut veneer finish.",
+      status: "DESIGN",
+      priority: "NORMAL",
+      projectType: "WARDROBE",
+      startDate: new Date("2026-02-10"),
+      targetDate: new Date("2026-05-30"),
+      siteAddress: "15 Kauri Avenue",
+      siteCity: "Wellington",
+      sitePostcode: "6011",
+      totalBudget: 22000,
+      companyId: brownResidence.id,
+      contactId: emmaBrown.id,
+      managedById: salesRep.id,
+    },
+  });
+
+  const project3 = await prisma.project.create({
+    data: {
+      projectNumber: "PRJ-2026-0003",
+      name: "Wilson & Partners Office Fitout",
+      description: "Commercial office fitout: reception desk, partner offices, meeting rooms, kitchen/breakroom, filing and storage. Professional finish throughout.",
+      status: "QUOTING",
+      priority: "NORMAL",
+      projectType: "COMMERCIAL_FITOUT",
+      startDate: new Date("2026-03-01"),
+      targetDate: new Date("2026-07-31"),
+      siteAddress: "Level 12, Commercial Bay",
+      siteCity: "Auckland",
+      sitePostcode: "1010",
+      siteNotes: "High-rise building. Freight lift access required. After-hours delivery only.",
+      totalBudget: 135000,
+      companyId: wilsonCommercial.id,
+      contactId: markWilson.id,
+      managedById: salesRep.id,
+    },
+  });
+
+  const project4 = await prisma.project.create({
+    data: {
+      projectNumber: "PRJ-2026-0004",
+      name: "Prestige Homes — Remuera New Build",
+      description: "Complete joinery package for new build: kitchen, laundry, bathroom vanity, master wardrobe, and study nook.",
+      status: "APPROVED",
+      priority: "HIGH",
+      projectType: "KITCHEN",
+      startDate: new Date("2026-02-15"),
+      targetDate: new Date("2026-06-30"),
+      siteAddress: "28 Arney Road",
+      siteCity: "Auckland",
+      sitePostcode: "1050",
+      totalBudget: 85000,
+      totalQuoted: 89700,
+      companyId: builder.id,
+      contactId: tomBuilder.id,
+      managedById: salesRep.id,
+    },
+  });
+
+  // ── Jobs within Projects ────────────────────────────────
+  const job1 = await prisma.job.create({
+    data: {
+      jobNumber: "JOB-202603-0001",
+      status: "IN_PROGRESS",
+      priority: "HIGH",
+      estimatedHours: 48,
+      materialCost: 12300,
+      labourCost: 16400,
+      labourHours: 48,
+      hardwareCost: 3600,
+      totalCost: 32300,
+      marginPercent: 34,
+      sellPrice: 48875,
+      installDate: new Date("2026-04-10"),
+      materialOrderByDate: new Date("2026-02-20"),
+      productionStartDate: new Date("2026-03-10"),
+      materialLeadDays: 10,
+      projectId: project1.id,
+      notes: "Smith Kitchen — all cabinets, island, pantry, benchtop",
+    },
+  });
+
+  // Job operations for Smith Kitchen
+  await prisma.jobOperation.createMany({
+    data: [
+      { jobId: job1.id, operationType: "CUTTING", sortOrder: 0, status: "COMPLETED", estimatedMins: 480, actualMins: 450, scheduledStartDate: new Date("2026-03-10"), scheduledEndDate: new Date("2026-03-10"), latestStartDate: new Date("2026-03-10") },
+      { jobId: job1.id, operationType: "CNC_MACHINING", sortOrder: 1, status: "COMPLETED", estimatedMins: 360, actualMins: 380, scheduledStartDate: new Date("2026-03-11"), scheduledEndDate: new Date("2026-03-12"), latestStartDate: new Date("2026-03-11") },
+      { jobId: job1.id, operationType: "EDGE_BANDING", sortOrder: 2, status: "IN_PROGRESS", estimatedMins: 240, scheduledStartDate: new Date("2026-03-13"), scheduledEndDate: new Date("2026-03-13"), latestStartDate: new Date("2026-03-14") },
+      { jobId: job1.id, operationType: "DRILLING", sortOrder: 3, status: "PENDING", estimatedMins: 120, scheduledStartDate: new Date("2026-03-14"), scheduledEndDate: new Date("2026-03-14"), latestStartDate: new Date("2026-03-16") },
+      { jobId: job1.id, operationType: "SANDING", sortOrder: 4, status: "PENDING", estimatedMins: 180, scheduledStartDate: new Date("2026-03-17"), scheduledEndDate: new Date("2026-03-17"), latestStartDate: new Date("2026-03-17") },
+      { jobId: job1.id, operationType: "ASSEMBLY", sortOrder: 5, status: "PENDING", estimatedMins: 720, scheduledStartDate: new Date("2026-03-18"), scheduledEndDate: new Date("2026-03-20"), latestStartDate: new Date("2026-03-20") },
+      { jobId: job1.id, operationType: "FITTING_HARDWARE", sortOrder: 6, status: "PENDING", estimatedMins: 240, scheduledStartDate: new Date("2026-03-21"), scheduledEndDate: new Date("2026-03-21"), latestStartDate: new Date("2026-03-23") },
+      { jobId: job1.id, operationType: "SPRAY_PREP", sortOrder: 7, status: "PENDING", estimatedMins: 180, scheduledStartDate: new Date("2026-03-24"), scheduledEndDate: new Date("2026-03-24"), latestStartDate: new Date("2026-03-25") },
+      { jobId: job1.id, operationType: "SPRAY_PAINTING", sortOrder: 8, status: "PENDING", estimatedMins: 480, scheduledStartDate: new Date("2026-03-25"), scheduledEndDate: new Date("2026-03-27"), latestStartDate: new Date("2026-03-27") },
+      { jobId: job1.id, operationType: "PACKING", sortOrder: 9, status: "PENDING", estimatedMins: 120, scheduledStartDate: new Date("2026-04-01"), scheduledEndDate: new Date("2026-04-01"), latestStartDate: new Date("2026-04-03") },
+    ],
+  });
+
+  // Job for Prestige Homes kitchen
+  await prisma.job.create({
+    data: {
+      jobNumber: "JOB-202603-0002",
+      status: "PENDING",
+      priority: "HIGH",
+      estimatedHours: 52,
+      materialCost: 15000,
+      labourCost: 18000,
+      labourHours: 52,
+      hardwareCost: 4200,
+      totalCost: 37200,
+      marginPercent: 30,
+      sellPrice: 53142,
+      installDate: new Date("2026-06-15"),
+      materialOrderByDate: new Date("2026-04-20"),
+      productionStartDate: new Date("2026-05-05"),
+      materialLeadDays: 10,
+      projectId: project4.id,
+      notes: "Prestige Homes — Kitchen package",
+    },
+  });
+
+  // Job for Prestige Homes laundry
+  await prisma.job.create({
+    data: {
+      jobNumber: "JOB-202603-0003",
+      status: "PENDING",
+      priority: "NORMAL",
+      estimatedHours: 16,
+      materialCost: 3800,
+      labourCost: 5200,
+      labourHours: 16,
+      hardwareCost: 960,
+      totalCost: 9960,
+      marginPercent: 30,
+      sellPrice: 14228,
+      installDate: new Date("2026-06-20"),
+      materialOrderByDate: new Date("2026-05-01"),
+      productionStartDate: new Date("2026-05-18"),
+      materialLeadDays: 10,
+      projectId: project4.id,
+      notes: "Prestige Homes — Laundry cabinets",
+    },
+  });
+
+  // ── Planned Invoices (Cashflow Schedule) ────────────────
+  await prisma.plannedInvoice.createMany({
+    data: [
+      // Smith Kitchen — 30/40/30 payment schedule
+      { projectId: project1.id, description: "Deposit — 30% on order confirmation", amount: 14662.50, plannedDate: new Date("2026-01-25"), milestone: "On order", status: "INVOICED" },
+      { projectId: project1.id, description: "Progress — 40% at 50% production", amount: 19550, plannedDate: new Date("2026-03-20"), milestone: "50% production" },
+      { projectId: project1.id, description: "Final — 30% on completion", amount: 14662.50, plannedDate: new Date("2026-04-15"), milestone: "On completion" },
+      // Prestige Homes — staged payments
+      { projectId: project4.id, description: "Deposit — 20% on order", amount: 17940, plannedDate: new Date("2026-03-01"), milestone: "On order" },
+      { projectId: project4.id, description: "Progress — 30% at production start", amount: 26910, plannedDate: new Date("2026-05-05"), milestone: "Production start" },
+      { projectId: project4.id, description: "Progress — 30% at delivery", amount: 26910, plannedDate: new Date("2026-06-15"), milestone: "On delivery" },
+      { projectId: project4.id, description: "Final — 20% after install sign-off", amount: 17940, plannedDate: new Date("2026-07-01"), milestone: "Post-install" },
+    ],
+  });
+
   console.log("Seed complete!");
   console.log("");
   console.log("Demo accounts:");

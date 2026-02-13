@@ -35,6 +35,7 @@ model User {
   auditLogs        AuditLog[]
   notes            Note[]
   employee         Employee?
+  managedProjects  Project[]       @relation("ProjectManager")
 
   @@map("users")
 }
@@ -79,6 +80,7 @@ model Company {
   opportunities Opportunity[]
   orders       Order[]
   quotes       Quote[]
+  projects     Project[]
   supplierProfile Supplier?
 
   @@map("companies")
@@ -114,6 +116,7 @@ model Contact {
   opportunities Opportunity[]
   activities   Activity[]
   quotes       Quote[]     @relation("QuoteContact")
+  projects     Project[]   @relation("ProjectContact")
 
   @@map("contacts")
 }
@@ -217,6 +220,7 @@ model Opportunity {
   quotes          Quote[]
   activities      Activity[]
   designBrief     DesignBrief?
+  project         Project?
 
   @@map("opportunities")
 }
@@ -272,6 +276,90 @@ enum ActivityType {
 }
 
 // ============================================================================
+// PROJECTS — Central entity: Lead → Opportunity → Project → Jobs
+// ============================================================================
+
+model Project {
+  id              String          @id @default(cuid())
+  projectNumber   String          @unique
+  name            String
+  description     String?
+  status          ProjectStatus   @default(PLANNING)
+  priority        OrderPriority   @default(NORMAL)
+  projectType     ProjectType?
+  startDate       DateTime?
+  targetDate      DateTime?
+  completedDate   DateTime?
+  siteAddress     String?
+  siteCity        String?
+  sitePostcode    String?
+  siteNotes       String?
+  totalBudget     Decimal?        @db.Decimal(12, 2)
+  totalQuoted     Decimal         @db.Decimal(12, 2) @default(0)
+  totalInvoiced   Decimal         @db.Decimal(12, 2) @default(0)
+  totalPaid       Decimal         @db.Decimal(12, 2) @default(0)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  // Relations
+  companyId       String
+  company         Company         @relation(fields: [companyId], references: [id])
+  contactId       String?
+  contact         Contact?        @relation("ProjectContact", fields: [contactId], references: [id])
+  opportunityId   String?         @unique
+  opportunity     Opportunity?    @relation(fields: [opportunityId], references: [id])
+  managedById     String?
+  managedBy       User?           @relation("ProjectManager", fields: [managedById], references: [id])
+  jobs            Job[]           @relation("ProjectJobs")
+  quotes          Quote[]         @relation("ProjectQuotes")
+  invoices        Invoice[]       @relation("ProjectInvoices")
+  deliveries      Delivery[]      @relation("ProjectDeliveries")
+  plannedInvoices PlannedInvoice[]
+  changeOrders    ChangeOrder[]   @relation("ProjectChangeOrders")
+  designBrief     DesignBrief?    @relation("ProjectDesignBrief")
+  cvImports       CabinetVisionImport[]
+
+  @@map("projects")
+}
+
+enum ProjectStatus {
+  PLANNING
+  DESIGN
+  QUOTING
+  APPROVED
+  IN_PRODUCTION
+  ON_HOLD
+  READY_FOR_DELIVERY
+  INSTALLING
+  COMPLETED
+  CANCELLED
+}
+
+model PlannedInvoice {
+  id              String              @id @default(cuid())
+  description     String
+  amount          Decimal             @db.Decimal(12, 2)
+  plannedDate     DateTime
+  milestone       String?             // e.g. "On order", "50% production", "On delivery", "On completion"
+  status          PlannedInvoiceStatus @default(PLANNED)
+  actualInvoiceId String?             // Links to real invoice when generated
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  // Relations
+  projectId       String
+  project         Project             @relation(fields: [projectId], references: [id])
+
+  @@map("planned_invoices")
+}
+
+enum PlannedInvoiceStatus {
+  PLANNED
+  INVOICED
+  CANCELLED
+}
+
+// ============================================================================
 // QUOTING
 // ============================================================================
 
@@ -305,6 +393,8 @@ model Quote {
   contact         Contact?      @relation("QuoteContact", fields: [contactId], references: [id])
   opportunityId   String?
   opportunity     Opportunity?  @relation(fields: [opportunityId], references: [id])
+  projectId       String?
+  project         Project?      @relation("ProjectQuotes", fields: [projectId], references: [id])
   createdById     String
   createdBy       User          @relation("CreatedBy", fields: [createdById], references: [id])
   lineItems       QuoteLineItem[]
@@ -407,8 +497,10 @@ model DesignBrief {
   updatedAt       DateTime  @updatedAt
 
   // Relations
-  opportunityId   String    @unique
-  opportunity     Opportunity @relation(fields: [opportunityId], references: [id])
+  opportunityId   String?   @unique
+  opportunity     Opportunity? @relation(fields: [opportunityId], references: [id])
+  projectId       String?   @unique
+  project         Project?  @relation("ProjectDesignBrief", fields: [projectId], references: [id])
   designFiles     DesignFile[]
   boms            BillOfMaterials[]
 
@@ -576,8 +668,10 @@ model ChangeOrder {
   updatedAt     DateTime          @updatedAt
 
   // Relations
-  orderId       String
-  order         Order             @relation(fields: [orderId], references: [id])
+  orderId       String?
+  order         Order?            @relation(fields: [orderId], references: [id])
+  projectId     String?
+  project       Project?          @relation("ProjectChangeOrders", fields: [projectId], references: [id])
 
   @@map("change_orders")
 }
@@ -841,12 +935,31 @@ model Job {
   estimatedHours  Decimal?    @db.Decimal(8, 2)
   actualHours     Decimal?    @db.Decimal(8, 2)
   notes           String?
+
+  // Pricing (at job level)
+  materialCost    Decimal     @db.Decimal(12, 2) @default(0)
+  labourCost      Decimal     @db.Decimal(12, 2) @default(0)
+  labourHours     Decimal?    @db.Decimal(8, 2)
+  hardwareCost    Decimal     @db.Decimal(12, 2) @default(0)
+  otherCost       Decimal     @db.Decimal(12, 2) @default(0)
+  totalCost       Decimal     @db.Decimal(12, 2) @default(0)
+  marginPercent   Decimal?    @db.Decimal(5, 2)
+  sellPrice       Decimal     @db.Decimal(12, 2) @default(0)
+
+  // Scheduling (backward from install date)
+  installDate         DateTime?
+  materialOrderByDate DateTime?
+  productionStartDate DateTime?
+  materialLeadDays    Int?
+
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
 
   // Relations
-  orderId         String
-  order           Order       @relation(fields: [orderId], references: [id])
+  orderId         String?
+  order           Order?      @relation(fields: [orderId], references: [id])
+  projectId       String?
+  project         Project?    @relation("ProjectJobs", fields: [projectId], references: [id])
   orderItemId     String?     @unique
   orderItem       OrderItem?  @relation(fields: [orderItemId], references: [id])
   operations      JobOperation[]
@@ -854,6 +967,7 @@ model Job {
   timeEntries     TimeEntry[]
   qualityChecks   QualityCheck[]
   workOrders      WorkOrder[]
+  labourBudgets   LabourBudget[]
 
   @@map("jobs")
 }
@@ -880,8 +994,11 @@ model JobOperation {
   estimatedMins   Int?
   actualMins      Int?
   notes           String?
-  startedAt       DateTime?
-  completedAt     DateTime?
+  startedAt           DateTime?
+  completedAt         DateTime?
+  scheduledStartDate  DateTime?
+  scheduledEndDate    DateTime?
+  latestStartDate     DateTime?   // From backward scheduling
 
   // Relations
   jobId           String
@@ -934,6 +1051,7 @@ model WorkStation {
   operations      JobOperation[]
   workOrders      WorkOrder[]
   bookings        WorkStationBooking[]
+  capacitySlots   CapacitySlot[]
 
   @@map("work_stations")
 }
@@ -1084,8 +1202,10 @@ model Delivery {
   updatedAt       DateTime        @updatedAt
 
   // Relations
-  orderId         String
-  order           Order           @relation(fields: [orderId], references: [id])
+  orderId         String?
+  order           Order?          @relation(fields: [orderId], references: [id])
+  projectId       String?
+  project         Project?        @relation("ProjectDeliveries", fields: [projectId], references: [id])
   installation    Installation?
 
   @@map("deliveries")
@@ -1171,8 +1291,10 @@ model Invoice {
   updatedAt       DateTime      @updatedAt
 
   // Relations
-  orderId         String
-  order           Order         @relation(fields: [orderId], references: [id])
+  orderId         String?
+  order           Order?        @relation(fields: [orderId], references: [id])
+  projectId       String?
+  project         Project?      @relation("ProjectInvoices", fields: [projectId], references: [id])
   lineItems       InvoiceLine[]
   payments        Payment[]
 
@@ -1437,4 +1559,71 @@ model Setting {
   updatedAt   DateTime  @updatedAt
 
   @@map("settings")
+}
+
+// ============================================================================
+// CABINET VISION INTEGRATION
+// ============================================================================
+
+model CabinetVisionImport {
+  id              String    @id @default(cuid())
+  fileName        String
+  fileType        String    // "csv", "xml", "mfg"
+  status          CVImportStatus @default(PENDING)
+  rawData         Json?     // Parsed raw data from the file
+  summary         Json?     // Extracted summary (total hours, materials, etc.)
+  errorLog        String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relations
+  projectId       String?
+  project         Project?  @relation(fields: [projectId], references: [id])
+  labourBudgets   LabourBudget[]
+
+  @@map("cabinet_vision_imports")
+}
+
+enum CVImportStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+model LabourBudget {
+  id              String        @id @default(cuid())
+  operationType   OperationType
+  estimatedHours  Decimal       @db.Decimal(8, 2)
+  complexity      String?       // "simple", "standard", "complex"
+  partCount       Int?          // Number of parts for this operation
+  notes           String?
+  createdAt       DateTime      @default(now())
+
+  // Relations
+  cvImportId      String?
+  cvImport        CabinetVisionImport? @relation(fields: [cvImportId], references: [id])
+  jobId           String?
+  job             Job?          @relation(fields: [jobId], references: [id])
+
+  @@map("labour_budgets")
+}
+
+// ============================================================================
+// CAPACITY PLANNING
+// ============================================================================
+
+model CapacitySlot {
+  id              String    @id @default(cuid())
+  date            DateTime  @db.Date
+  availableHours  Decimal   @db.Decimal(8, 2)
+  bookedHours     Decimal   @db.Decimal(8, 2) @default(0)
+  notes           String?
+
+  // Relations
+  workStationId   String
+  workStation     WorkStation @relation(fields: [workStationId], references: [id])
+
+  @@unique([workStationId, date])
+  @@map("capacity_slots")
 }

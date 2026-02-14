@@ -36,6 +36,7 @@ export default function InvoiceDetailPage() {
       <PageHeader
         title={`Invoice ${invoice.invoiceNumber}`}
         description={invoice.order?.company ? `Customer: ${invoice.order.company.name}` : undefined}
+        helpText="View this invoice's line items, payment history, and outstanding balance — record payments and track status changes."
         actions={
           <div className="flex items-center gap-2">
             {isOverdue && <Badge variant="destructive">Overdue</Badge>}

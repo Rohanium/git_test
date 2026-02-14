@@ -60,7 +60,7 @@ export default function StockPage() {
 
   return (
     <div className="space-y-5">
-      <PageHeader title="Stock Overview" description="Current inventory levels and stock value." />
+      <PageHeader title="Stock Overview" description="Current inventory levels and stock value." helpText="Current stock levels across all materials — see total value, low stock alerts, and click any row to view material details and supplier info." />
 
       <div className="grid gap-4 grid-cols-1 md:grid-cols-3">
         <StatCard title="Total Items" value={totalItems} description="Active materials tracked" icon={<Package className="h-5 w-5" />} />

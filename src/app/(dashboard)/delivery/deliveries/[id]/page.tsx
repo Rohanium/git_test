@@ -34,6 +34,7 @@ export default function DeliveryDetailPage() {
       <PageHeader
         title={`Delivery ${delivery.deliveryNumber}`}
         description={delivery.order?.company ? `Customer: ${delivery.order.company.name}` : undefined}
+        helpText="View this delivery's schedule, address, installation details, and any snag items that need attention."
         actions={
           <Badge variant={statusVariant[delivery.status] ?? "default"}>{delivery.status.replace(/_/g, " ")}</Badge>
         }

@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { PageHeader } from "@/components/ui/page-header";
 import { formatDateTime } from "@/lib/utils";
 
 export default function TimeClockPage() {
@@ -47,12 +48,13 @@ export default function TimeClockPage() {
 
   return (
     <div className="mx-auto max-w-2xl space-y-6 py-8">
+      <PageHeader
+        title="Workshop Time Clock"
+        description={new Date().toLocaleDateString("en-NZ", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
+        helpText="Staff time tracking — clock in and out of jobs, record breaks, and review today's time entries across the workshop."
+      />
       {/* Header — Large for tablet use */}
       <div className="text-center">
-        <h1 className="text-3xl font-bold">Workshop Time Clock</h1>
-        <p className="text-lg text-muted-foreground">
-          {new Date().toLocaleDateString("en-NZ", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
-        </p>
         <p className="mt-1 text-4xl font-bold tabular-nums">
           {new Date().toLocaleTimeString("en-NZ", { hour: "2-digit", minute: "2-digit" })}
         </p>

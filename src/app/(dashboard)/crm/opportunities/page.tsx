@@ -40,6 +40,7 @@ export default function OpportunitiesPage() {
       <PageHeader
         title="Opportunities"
         description={`Sales pipeline — ${formatCurrency(pipelineTotal)} total value`}
+        helpText="Your sales pipeline as a Kanban board — drag opportunities through stages from Enquiry to Won, and click any card to view full details."
         actions={
           <div className="flex items-center gap-2">
             <div className="flex rounded-md border">

@@ -19,6 +19,7 @@ export default function ContactDetailPage() {
       <PageHeader
         title={`${contact.firstName} ${contact.lastName}`}
         description={[contact.jobTitle, contact.company?.name].filter(Boolean).join(" at ")}
+        helpText="View and manage this contact's details, see their linked company, opportunities, leads, and full activity timeline."
         actions={contact.isPrimary ? <Badge variant="success">Primary Contact</Badge> : undefined}
       />
 

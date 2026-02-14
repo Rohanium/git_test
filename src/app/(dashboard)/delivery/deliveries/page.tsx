@@ -66,6 +66,7 @@ export default function DeliveriesPage() {
       <PageHeader
         title="Deliveries"
         description="Schedule and track deliveries to customer sites."
+        helpText="Schedule and track deliveries to customer sites — click any row to view delivery details, installation status, and any snag items."
         actions={<Button>+ Schedule Delivery</Button>}
       />
 

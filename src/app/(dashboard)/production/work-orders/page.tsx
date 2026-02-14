@@ -9,6 +9,7 @@ export default function WorkOrdersPage() {
       <PageHeader
         title="Work Orders"
         description="Detailed work instructions for workshop operations."
+        helpText="Create and assign work orders to staff and workstations — track individual tasks within larger production jobs."
         actions={<Button>+ New Work Order</Button>}
       />
 

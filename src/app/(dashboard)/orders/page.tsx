@@ -108,6 +108,7 @@ export default function OrdersPage() {
       <PageHeader
         title="Orders"
         description="Track confirmed orders through production and delivery."
+        helpText="Track all customer orders from confirmation through to completion — use the tabs to filter by status, and click any row to manage jobs, invoices, and deliveries."
       />
 
       <Tabs

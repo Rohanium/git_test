@@ -95,6 +95,7 @@ export default function JobsPage() {
       <PageHeader
         title="Production Jobs"
         description="All workshop production jobs."
+        helpText="All production jobs across your workshop — filter by status, and click any row to view operations, materials, time entries, and quality checks."
       />
 
       <Tabs

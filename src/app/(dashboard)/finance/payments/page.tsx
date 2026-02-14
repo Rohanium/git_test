@@ -8,6 +8,7 @@ export default function PaymentsPage() {
       <PageHeader
         title="Payments"
         description="Track customer payments and deposits."
+        helpText="Record and track payments received against invoices — view payment method, reference details, and reconciliation status."
       />
 
       <div className="rounded-lg border border-dashed p-12 text-center">

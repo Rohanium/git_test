@@ -22,6 +22,7 @@ export default function FinancialReportsPage() {
       <PageHeader
         title="Financial Reports"
         description="Accounts receivable aging, P&L summary, and cash flow."
+        helpText="Financial reports and summaries — view revenue, expenses, profit margins, and accounts receivable aging."
       />
 
       {/* AR Aging */}

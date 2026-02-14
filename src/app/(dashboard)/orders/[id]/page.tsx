@@ -101,6 +101,7 @@ export default function OrderDetailPage() {
       <PageHeader
         title={`${order.orderNumber}`}
         description={order.company?.name}
+        helpText="Manage this order's items, production jobs, invoices, change orders, and delivery schedule all in one place."
         actions={
           <div className="flex items-center gap-2">
             <Badge variant={orderStatusVariant[order.status] ?? "secondary"} className="text-sm">

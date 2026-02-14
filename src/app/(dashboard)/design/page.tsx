@@ -10,6 +10,7 @@ export default function DesignPage() {
       <PageHeader
         title="Design & Engineering"
         description="Manage design briefs, CAD files, and bills of materials."
+        helpText="Manage design files, drawings, and specifications — organise by project and share with your workshop team."
       />
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

@@ -64,6 +64,7 @@ export default function ContactsPage() {
       <PageHeader
         title="Contacts"
         description="Manage your customer contacts, architects, and trade relationships."
+        helpText="Your contact directory — add individuals you work with, link them to companies, and click any row to view their full profile and activity history."
         actions={
           <Button onClick={() => setShowCreate(true)}>
             <Plus className="mr-1.5 h-4 w-4" /> New Contact

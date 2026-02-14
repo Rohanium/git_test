@@ -30,11 +30,16 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6">
       {/* Greeting */}
-      <div>
-        <h2 className="text-xl font-bold tracking-tight">Good morning</h2>
-        <p className="text-[13px] text-muted-foreground">
-          Here's what's happening with your business today.
-        </p>
+      <div className="space-y-3">
+        <div>
+          <h2 className="text-xl font-bold tracking-tight">Good morning</h2>
+          <p className="text-[13px] text-muted-foreground">
+            Here's what's happening with your business today.
+          </p>
+        </div>
+        <div className="rounded-lg border border-blue-200 bg-blue-50/50 px-4 py-3 text-[13px] text-blue-900 dark:border-blue-900 dark:bg-blue-950/30 dark:text-blue-200">
+          Your business dashboard — key metrics at a glance. Use the sidebar to navigate to CRM, quotes, orders, production, inventory, and finance modules.
+        </div>
       </div>
 
       {/* Executive KPIs */}

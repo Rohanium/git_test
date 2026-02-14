@@ -15,6 +15,7 @@ export default function QualityPage() {
       <PageHeader
         title="Quality Control"
         description="Inspect jobs, log defects, and manage quality standards."
+        helpText="Monitor quality control across your workshop — inspect jobs, log defects, track resolution, and maintain quality standards."
       />
 
       <div className="grid gap-4 md:grid-cols-2">

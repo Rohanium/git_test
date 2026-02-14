@@ -592,6 +592,7 @@ export default function SchedulePage() {
       <PageHeader
         title="Production Schedule"
         description="View and manage factory schedule with backward-calculated deadlines."
+        helpText="Visualise your production schedule as a timeline — see job durations, dependencies, and workstation assignments across your workshop."
         actions={
           <div className="flex items-center gap-3">
             {/* View Toggle */}

@@ -577,6 +577,7 @@ export default function ProjectDetailPage() {
       <PageHeader
         title={`${project.projectNumber} -- ${project.name}`}
         description={project.company.name}
+        helpText="View this project's full details including timeline, budget tracking, linked orders, and milestones."
         actions={
           <div className="flex items-center gap-2">
             <Badge variant={statusCfg.variant} className="text-sm">

@@ -8,6 +8,7 @@ export default function GoodsReceivingPage() {
       <PageHeader
         title="Goods Receiving"
         description="Check in deliveries from suppliers against purchase orders."
+        helpText="Record incoming goods against purchase orders — verify quantities, check quality, and update stock levels automatically."
       />
 
       <div className="rounded-lg border border-dashed p-12 text-center">

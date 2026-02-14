@@ -112,6 +112,7 @@ export default function QuotesPage() {
       <PageHeader
         title="Quotes"
         description="Create and manage customer quotes with detailed pricing."
+        helpText="Create and manage quotes for your customers — click any row to view line items, pricing, and convert accepted quotes into orders."
         actions={
           <Button onClick={() => setShowCreate(true)}>
             <Plus className="mr-1.5 h-4 w-4" /> New Quote

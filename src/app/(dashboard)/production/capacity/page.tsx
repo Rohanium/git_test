@@ -410,6 +410,7 @@ export default function CapacityPlanningPage() {
       <PageHeader
         title="Factory Capacity"
         description="View available capacity, schedule jobs, and estimate delivery dates."
+        helpText="Plan your workshop capacity — see workstation utilisation, identify bottlenecks, and forecast production load."
       />
 
       {/* ================================================================

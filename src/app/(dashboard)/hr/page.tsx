@@ -14,6 +14,7 @@ export default function HRPage() {
       <PageHeader
         title="HR & Workforce"
         description="Manage employees, skills, and leave."
+        helpText="Manage your team — view employee profiles, track leave requests, certifications, and subcontractor details."
       />
 
       <div className="grid gap-6 lg:grid-cols-2">

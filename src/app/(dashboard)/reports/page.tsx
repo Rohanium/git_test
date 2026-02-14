@@ -14,6 +14,7 @@ export default function ReportsPage() {
       <PageHeader
         title="Reports & Analytics"
         description="Executive overview and business intelligence."
+        helpText="Business intelligence dashboards — view KPIs across sales, production, finance, and operations to track performance."
       />
 
       {/* Executive KPIs */}

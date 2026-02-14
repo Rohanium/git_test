@@ -22,7 +22,7 @@ export default function ProductionDashboardPage() {
 
   return (
     <div className="space-y-5">
-      <PageHeader title="Workshop Dashboard" description="Real-time production overview." />
+      <PageHeader title="Workshop Dashboard" description="Real-time production overview." helpText="A real-time overview of your workshop — see active jobs, staff clock-ins, and job status breakdown at a glance." />
 
       <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
         <StatCard title="In Progress" value={inProgress} description="Jobs actively being worked" icon={<Hammer className="h-5 w-5" />} />

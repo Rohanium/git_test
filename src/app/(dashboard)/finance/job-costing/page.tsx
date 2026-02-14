@@ -9,6 +9,7 @@ export default function JobCostingPage() {
       <PageHeader
         title="Job Costing"
         description="Track actual costs vs estimates for every job."
+        helpText="Analyse job profitability — compare material costs, labour hours, and overheads against quoted prices to track margins."
       />
 
       <div className="grid gap-4 md:grid-cols-3">

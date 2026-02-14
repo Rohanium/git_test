@@ -217,6 +217,7 @@ export default function ProjectsPage() {
       <PageHeader
         title="Projects"
         description="Manage projects from lead through to completion."
+        helpText="View all your projects with their timelines, budgets, and progress — click any row to see full project details and linked orders."
         actions={
           <Button onClick={() => setShowCreate(true)}>
             <Plus className="mr-1.5 h-4 w-4" /> New Project

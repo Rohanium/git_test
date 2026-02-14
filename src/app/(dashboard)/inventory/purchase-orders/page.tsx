@@ -74,6 +74,7 @@ export default function PurchaseOrdersPage() {
       <PageHeader
         title="Purchase Orders"
         description="Track material orders to suppliers."
+        helpText="Create and track purchase orders to suppliers — monitor order status from draft through to received, and manage deliveries."
         actions={<Button>+ New PO</Button>}
       />
 

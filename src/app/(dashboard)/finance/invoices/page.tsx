@@ -87,7 +87,7 @@ export default function InvoicesPage() {
 
   return (
     <div className="space-y-5">
-      <PageHeader title="Invoices" description="Manage customer invoices and track payments." />
+      <PageHeader title="Invoices" description="Manage customer invoices and track payments." helpText="Create and track customer invoices — filter by status, monitor overdue payments, and click any row to view line items and payment history." />
 
       <div className="grid gap-4 grid-cols-1 md:grid-cols-3">
         <StatCard title="Month Revenue" value={formatCurrency(dashboard?.monthRevenue ?? 0)} description="Payments received this month" icon={<DollarSign className="h-5 w-5" />} />

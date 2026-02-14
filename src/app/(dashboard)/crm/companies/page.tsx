@@ -99,6 +99,7 @@ export default function CompaniesPage() {
       <PageHeader
         title="Companies"
         description="Manage customer, supplier, and trade partner companies."
+        helpText="Manage all your customer, supplier, and trade partner companies — click any row to view full details, linked contacts, and order history."
         actions={
           <Button onClick={() => setShowCreate(true)}>+ New Company</Button>
         }

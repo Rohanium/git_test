@@ -82,6 +82,7 @@ export default function MaterialsPage() {
       <PageHeader
         title="Materials"
         description="Manage your material catalogue — timber, board goods, hardware, finishes."
+        helpText="Your material catalogue — add timber, board goods, hardware, and finishes, then click any row to view stock levels and supplier pricing."
         actions={<Button onClick={() => setShowCreate(true)}>+ New Material</Button>}
       />
 

@@ -45,6 +45,7 @@ export default function LeadDetailPage() {
       <PageHeader
         title={lead.title}
         description={lead.description ?? undefined}
+        helpText="View this lead's full details including source, estimated value, linked contact, and activity timeline."
         actions={<Badge variant={statusVariant}>{lead.status}</Badge>}
       />
 

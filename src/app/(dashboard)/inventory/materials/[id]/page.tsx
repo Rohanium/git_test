@@ -29,6 +29,7 @@ export default function MaterialDetailPage() {
       <PageHeader
         title={material.name}
         description={material.sku ? `SKU: ${material.sku}` : undefined}
+        helpText="View this material's specifications, current stock across locations, and linked suppliers with their pricing."
         actions={
           material.category ? <Badge variant="secondary">{material.category.name}</Badge> : undefined
         }

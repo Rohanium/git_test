@@ -15,6 +15,7 @@ export default function SuppliersPage() {
       <PageHeader
         title="Suppliers"
         description="Manage your material suppliers and their details."
+        helpText="Manage your material suppliers — see their product range, purchase order history, and click any card to view full supplier details."
         actions={<Button>+ New Supplier</Button>}
       />
 

@@ -27,6 +27,7 @@ export default function CompanyDetailPage() {
     <div className="space-y-6">
       <PageHeader
         title={company.name}
+        helpText="View this company's details, contacts, recent orders, opportunities, and leads all in one place."
         actions={<Badge variant={badgeVariant}>{company.type}</Badge>}
       />
 

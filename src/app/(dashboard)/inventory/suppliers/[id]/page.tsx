@@ -37,6 +37,7 @@ export default function SupplierDetailPage() {
             ? [company.city, company.state].filter(Boolean).join(", ") || undefined
             : undefined
         }
+        helpText="View this supplier's company details, the materials they supply, and recent purchase order history."
         actions={
           supplier.rating != null
             ? <div className="flex items-center gap-2">{renderStars(Number(supplier.rating))}</div>

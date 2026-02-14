@@ -12,6 +12,7 @@ export default function WorkstationsPage() {
       <PageHeader
         title="Workstations"
         description="Manage workshop machines and assembly stations."
+        helpText="Manage your workshop's workstations — see current capacity, assigned operations, and equipment availability."
       />
 
       {isLoading ? (

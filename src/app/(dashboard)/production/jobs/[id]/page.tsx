@@ -29,6 +29,7 @@ export default function JobDetailPage() {
       <PageHeader
         title={`Job ${job.jobNumber}`}
         description={job.order?.company?.name ? `Order ${job.order.orderNumber} - ${job.order.company.name}` : undefined}
+        helpText="Manage this production job's operations sequence, material allocations, time tracking, and quality control checks."
         actions={
           <div className="flex items-center gap-2">
             <Badge variant={priorityVariant[job.priority as keyof typeof priorityVariant] ?? "secondary"}>

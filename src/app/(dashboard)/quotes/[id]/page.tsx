@@ -69,6 +69,7 @@ export default function QuoteDetailPage() {
       <PageHeader
         title={`${quote.quoteNumber} — ${quote.title}`}
         description={quote.company?.name ?? "No company assigned"}
+        helpText="Review this quote's line items, pricing breakdown, and status — you can update details or convert it to an order when accepted."
         actions={
           <div className="flex items-center gap-2">
             <Badge variant={statusVariant[quote.status] ?? "secondary"} className="text-sm">

@@ -34,6 +34,7 @@ export default function OpportunityDetailPage() {
       <PageHeader
         title={opportunity.title}
         description={opportunity.description ?? undefined}
+        helpText="View this opportunity's stage, value, probability, linked quotes, and full activity timeline."
         actions={getStageBadge(opportunity.stage)}
       />
 

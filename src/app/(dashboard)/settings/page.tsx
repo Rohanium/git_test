@@ -9,6 +9,7 @@ export default function SettingsPage() {
       <PageHeader
         title="Settings"
         description="System configuration and preferences."
+        helpText="Configure your system — manage users, roles, company settings, tax rates, templates, and integrations."
       />
 
       <div className="grid gap-4 md:grid-cols-2">

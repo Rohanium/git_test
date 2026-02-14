@@ -129,6 +129,7 @@ export default function LeadsPage() {
       <PageHeader
         title="Leads"
         description="Track and qualify incoming enquiries."
+        helpText="Track incoming enquiries from initial contact through to qualification — use the tabs to filter by status, and click any lead to see full details."
         actions={
           <Button onClick={() => setShowCreate(true)}>+ New Lead</Button>
         }

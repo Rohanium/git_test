@@ -8,6 +8,7 @@ export default function InstallationsPage() {
       <PageHeader
         title="Installations"
         description="Schedule and track on-site installation work."
+        helpText="Track on-site installations — schedule installers, record completion, get customer sign-off, and log any snag items."
       />
 
       <div className="rounded-lg border border-dashed p-12 text-center">

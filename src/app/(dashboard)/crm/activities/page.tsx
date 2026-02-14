@@ -54,6 +54,7 @@ export default function ActivitiesPage() {
       <PageHeader
         title="Activities"
         description="Log calls, meetings, site visits, and other interactions."
+        helpText="Log calls, emails, meetings, and site visits — all activities are linked to contacts, leads, or opportunities for a complete interaction history."
         actions={
           <Button onClick={() => setShowCreate(true)}>+ Log Activity</Button>
         }

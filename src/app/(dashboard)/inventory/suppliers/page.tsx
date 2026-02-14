@@ -1,11 +1,13 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { trpc } from "@/lib/trpc";
 import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
 export default function SuppliersPage() {
+  const router = useRouter();
   const { data: suppliers, isLoading } = trpc.inventory.listSuppliers.useQuery();
 
   return (
@@ -28,7 +30,7 @@ export default function SuppliersPage() {
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {suppliers.map((s: any) => (
-            <div key={s.id} className="rounded-lg border bg-card p-5">
+            <div key={s.id} className="cursor-pointer rounded-lg border bg-card p-5 transition-shadow hover:shadow-md" onClick={() => router.push("/inventory/suppliers/" + s.id)}>
               <h3 className="font-semibold">{s.company.name}</h3>
               {s.company.phone && <p className="mt-1 text-sm text-muted-foreground">{s.company.phone}</p>}
               {s.company.email && <p className="text-sm text-muted-foreground">{s.company.email}</p>}

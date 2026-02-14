@@ -56,7 +56,7 @@ export default function ReportsPage() {
 
       {/* Report Links */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <Card className="cursor-pointer transition-colors hover:bg-muted/50">
+        <Card className="transition-colors">
           <CardHeader>
             <CardTitle className="text-base">Sales Performance</CardTitle>
           </CardHeader>
@@ -67,7 +67,7 @@ export default function ReportsPage() {
           </CardContent>
         </Card>
 
-        <Card className="cursor-pointer transition-colors hover:bg-muted/50">
+        <Card className="transition-colors">
           <CardHeader>
             <CardTitle className="text-base">Production Efficiency</CardTitle>
           </CardHeader>
@@ -78,7 +78,7 @@ export default function ReportsPage() {
           </CardContent>
         </Card>
 
-        <Card className="cursor-pointer transition-colors hover:bg-muted/50">
+        <Card className="transition-colors">
           <CardHeader>
             <CardTitle className="text-base">Job Profitability</CardTitle>
           </CardHeader>
@@ -89,7 +89,7 @@ export default function ReportsPage() {
           </CardContent>
         </Card>
 
-        <Card className="cursor-pointer transition-colors hover:bg-muted/50">
+        <Card className="transition-colors">
           <CardHeader>
             <CardTitle className="text-base">Inventory Reports</CardTitle>
           </CardHeader>
@@ -100,7 +100,7 @@ export default function ReportsPage() {
           </CardContent>
         </Card>
 
-        <Card className="cursor-pointer transition-colors hover:bg-muted/50">
+        <Card className="transition-colors">
           <CardHeader>
             <CardTitle className="text-base">Accounts Receivable</CardTitle>
           </CardHeader>
@@ -111,7 +111,7 @@ export default function ReportsPage() {
           </CardContent>
         </Card>
 
-        <Card className="cursor-pointer transition-colors hover:bg-muted/50">
+        <Card className="transition-colors">
           <CardHeader>
             <CardTitle className="text-base">Customer Analysis</CardTitle>
           </CardHeader>

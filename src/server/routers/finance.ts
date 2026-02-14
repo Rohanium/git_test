@@ -35,6 +35,19 @@ export const financeRouter = createTRPCRouter({
       return { invoices, total, pages: Math.ceil(total / input.pageSize) };
     }),
 
+  getInvoice: protectedProcedure
+    .input(z.string())
+    .query(async ({ ctx, input }) => {
+      return ctx.db.invoice.findUniqueOrThrow({
+        where: { id: input },
+        include: {
+          order: { include: { company: true } },
+          lineItems: true,
+          payments: { orderBy: { paidDate: "desc" } },
+        },
+      });
+    }),
+
   createInvoice: roleRestrictedProcedure("ADMIN", "ACCOUNTS")
     .input(
       z.object({

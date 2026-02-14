@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { trpc } from "@/lib/trpc";
 import { PageHeader } from "@/components/ui/page-header";
 import { DataTable } from "@/components/ui/data-table";
@@ -9,6 +10,7 @@ import { formatCurrency } from "@/lib/utils";
 import { Package, DollarSign, AlertTriangle } from "lucide-react";
 
 export default function StockPage() {
+  const router = useRouter();
   const { data: stockSummary, isLoading } = trpc.inventory.stockSummary.useQuery();
 
   const totalValue = stockSummary?.reduce((s, i) => s + i.totalValue, 0) ?? 0;
@@ -72,7 +74,7 @@ export default function StockPage() {
         />
       </div>
 
-      <DataTable columns={columns} data={stockSummary ?? []} loading={isLoading} emptyMessage="No stock items. Add materials and record stock to see inventory levels." />
+      <DataTable columns={columns} data={stockSummary ?? []} loading={isLoading} emptyMessage="No stock items. Add materials and record stock to see inventory levels." onRowClick={(i) => router.push("/inventory/materials/" + i.id)} />
     </div>
   );
 }

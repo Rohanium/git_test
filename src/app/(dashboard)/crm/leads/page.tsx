@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { trpc } from "@/lib/trpc";
 import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
@@ -47,6 +48,7 @@ const statusBadge: Record<string, "default" | "secondary" | "success" | "warning
 };
 
 export default function LeadsPage() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("all");
   const [showCreate, setShowCreate] = useState(false);
   const [form, setForm] = useState({
@@ -146,6 +148,7 @@ export default function LeadsPage() {
         data={data?.leads ?? []}
         loading={isLoading}
         emptyMessage="No leads found. Create your first lead to start tracking enquiries."
+        onRowClick={(l) => router.push("/crm/leads/" + l.id)}
       />
 
       <Modal

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { trpc } from "@/lib/trpc";
 import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,7 @@ const statusVariant: Record<string, any> = {
 };
 
 export default function DeliveriesPage() {
+  const router = useRouter();
   const { data, isLoading } = trpc.delivery.listDeliveries.useQuery({
     page: 1,
     pageSize: 50,
@@ -73,6 +74,7 @@ export default function DeliveriesPage() {
         data={data?.deliveries ?? []}
         loading={isLoading}
         emptyMessage="No deliveries scheduled."
+        onRowClick={(d) => router.push("/delivery/deliveries/" + d.id)}
       />
     </div>
   );

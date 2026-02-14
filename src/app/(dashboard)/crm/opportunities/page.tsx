@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { trpc } from "@/lib/trpc";
 import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,7 @@ import { PIPELINE_STAGES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 export default function OpportunitiesPage() {
+  const router = useRouter();
   const [view, setView] = useState<"board" | "list">("board");
 
   const { data: pipeline } = trpc.crm.pipelineSummary.useQuery();
@@ -106,6 +108,7 @@ export default function OpportunitiesPage() {
                     <div
                       key={opp.id}
                       className="cursor-pointer rounded-md border bg-card p-3 shadow-sm transition-shadow hover:shadow-md"
+                      onClick={() => router.push("/crm/opportunities/" + opp.id)}
                     >
                       <p className="text-sm font-medium">{opp.title}</p>
                       {opp.company && (

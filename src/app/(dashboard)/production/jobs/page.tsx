@@ -111,6 +111,7 @@ export default function JobsPage() {
         data={data?.jobs ?? []}
         loading={isLoading}
         emptyMessage="No jobs found. Jobs are created from confirmed orders."
+        onRowClick={(j) => router.push("/production/jobs/" + j.id)}
       />
     </div>
   );

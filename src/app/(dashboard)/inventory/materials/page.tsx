@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { trpc } from "@/lib/trpc";
 import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
@@ -12,6 +13,7 @@ import { formatCurrency } from "@/lib/utils";
 import { MATERIAL_UNITS } from "@/lib/constants";
 
 export default function MaterialsPage() {
+  const router = useRouter();
   const [search, setSearch] = useState("");
   const [showCreate, setShowCreate] = useState(false);
   const [form, setForm] = useState({
@@ -96,6 +98,7 @@ export default function MaterialsPage() {
         data={data?.materials ?? []}
         loading={isLoading}
         emptyMessage="No materials in catalogue. Add your first material to start tracking inventory."
+        onRowClick={(m) => router.push("/inventory/materials/" + m.id)}
       />
 
       <Modal

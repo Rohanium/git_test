@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { trpc } from "@/lib/trpc";
 import { PageHeader } from "@/components/ui/page-header";
 import { DataTable } from "@/components/ui/data-table";
@@ -26,6 +27,7 @@ const statusVariant: Record<string, any> = {
 };
 
 export default function InvoicesPage() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("all");
 
   const { data, isLoading } = trpc.finance.listInvoices.useQuery({
@@ -99,7 +101,7 @@ export default function InvoicesPage() {
         onChange={setActiveTab}
       />
 
-      <DataTable columns={columns} data={data?.invoices ?? []} loading={isLoading} emptyMessage="No invoices yet." />
+      <DataTable columns={columns} data={data?.invoices ?? []} loading={isLoading} emptyMessage="No invoices yet." onRowClick={(inv) => router.push("/finance/invoices/" + inv.id)} />
     </div>
   );
 }

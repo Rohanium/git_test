@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { trpc } from "@/lib/trpc";
 import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
@@ -21,6 +22,7 @@ const COMPANY_TYPES = [
 ];
 
 export default function CompaniesPage() {
+  const router = useRouter();
   const [search, setSearch] = useState("");
   const [showCreate, setShowCreate] = useState(false);
   const [form, setForm] = useState({
@@ -122,6 +124,7 @@ export default function CompaniesPage() {
         data={data?.companies ?? []}
         loading={isLoading}
         emptyMessage="No companies yet. Create your first company to get started."
+        onRowClick={(c) => router.push("/crm/companies/" + c.id)}
       />
 
       <Modal

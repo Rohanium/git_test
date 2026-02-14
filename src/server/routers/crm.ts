@@ -130,6 +130,20 @@ export const crmRouter = createTRPCRouter({
       return { companies, total, pages: Math.ceil(total / pageSize) };
     }),
 
+  getCompany: protectedProcedure
+    .input(z.string())
+    .query(async ({ ctx, input }) => {
+      return ctx.db.company.findUniqueOrThrow({
+        where: { id: input },
+        include: {
+          contacts: { where: { isActive: true }, orderBy: { lastName: "asc" } },
+          orders: { include: { _count: { select: { jobs: true, invoices: true } } }, orderBy: { createdAt: "desc" }, take: 10 },
+          opportunities: { include: { owner: true }, orderBy: { updatedAt: "desc" }, take: 10 },
+          leads: { orderBy: { createdAt: "desc" }, take: 10 },
+        },
+      });
+    }),
+
   createCompany: protectedProcedure
     .input(
       z.object({
@@ -186,6 +200,20 @@ export const crmRouter = createTRPCRouter({
       ]);
 
       return { leads, total, pages: Math.ceil(total / input.pageSize) };
+    }),
+
+  getLead: protectedProcedure
+    .input(z.string())
+    .query(async ({ ctx, input }) => {
+      return ctx.db.lead.findUniqueOrThrow({
+        where: { id: input },
+        include: {
+          contact: true,
+          company: true,
+          assignedTo: true,
+          activities: { orderBy: { createdAt: "desc" }, take: 20 },
+        },
+      });
     }),
 
   createLead: roleRestrictedProcedure("ADMIN", "SALES")
@@ -245,6 +273,21 @@ export const crmRouter = createTRPCRouter({
       ]);
 
       return { opportunities, total, pages: Math.ceil(total / input.pageSize) };
+    }),
+
+  getOpportunity: protectedProcedure
+    .input(z.string())
+    .query(async ({ ctx, input }) => {
+      return ctx.db.opportunity.findUniqueOrThrow({
+        where: { id: input },
+        include: {
+          contact: true,
+          company: true,
+          owner: true,
+          activities: { orderBy: { createdAt: "desc" }, take: 20 },
+          quotes: { orderBy: { createdAt: "desc" } },
+        },
+      });
     }),
 
   // ── Pipeline Summary ──────────────────────────────────────

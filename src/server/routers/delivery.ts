@@ -36,6 +36,18 @@ export const deliveryRouter = createTRPCRouter({
       return { deliveries, total, pages: Math.ceil(total / input.pageSize) };
     }),
 
+  getDelivery: protectedProcedure
+    .input(z.string())
+    .query(async ({ ctx, input }) => {
+      return ctx.db.delivery.findUniqueOrThrow({
+        where: { id: input },
+        include: {
+          order: { include: { company: true } },
+          installation: { include: { snagItems: true } },
+        },
+      });
+    }),
+
   scheduleDelivery: roleRestrictedProcedure("ADMIN", "WORKSHOP_MANAGER", "INSTALLER")
     .input(
       z.object({

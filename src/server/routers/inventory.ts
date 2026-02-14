@@ -44,6 +44,19 @@ export const inventoryRouter = createTRPCRouter({
       return { materials, total, pages: Math.ceil(total / input.pageSize) };
     }),
 
+  getMaterial: protectedProcedure
+    .input(z.string())
+    .query(async ({ ctx, input }) => {
+      return ctx.db.material.findUniqueOrThrow({
+        where: { id: input },
+        include: {
+          category: true,
+          stockItems: true,
+          supplierMaterials: { include: { supplier: { include: { company: true } } } },
+        },
+      });
+    }),
+
   createMaterial: roleRestrictedProcedure("ADMIN", "WORKSHOP_MANAGER")
     .input(
       z.object({
@@ -173,6 +186,19 @@ export const inventoryRouter = createTRPCRouter({
       orderBy: { company: { name: "asc" } },
     });
   }),
+
+  getSupplier: protectedProcedure
+    .input(z.string())
+    .query(async ({ ctx, input }) => {
+      return ctx.db.supplier.findUniqueOrThrow({
+        where: { id: input },
+        include: {
+          company: true,
+          supplierMaterials: { include: { material: true } },
+          purchaseOrders: { orderBy: { createdAt: "desc" }, take: 10, include: { _count: { select: { lineItems: true } } } },
+        },
+      });
+    }),
 
   // ── Material Allocation ────────────────────────────────────
   allocateMaterials: roleRestrictedProcedure("ADMIN", "WORKSHOP_MANAGER")

@@ -13,7 +13,7 @@ export default function DesignPage() {
       />
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <Card className="cursor-pointer transition-colors hover:bg-muted/50">
+        <Card className="transition-colors">
           <CardHeader>
             <CardTitle className="text-base">Design Briefs</CardTitle>
           </CardHeader>
@@ -24,7 +24,7 @@ export default function DesignPage() {
           </CardContent>
         </Card>
 
-        <Card className="cursor-pointer transition-colors hover:bg-muted/50">
+        <Card className="transition-colors">
           <CardHeader>
             <CardTitle className="text-base">File Manager</CardTitle>
           </CardHeader>
@@ -35,7 +35,7 @@ export default function DesignPage() {
           </CardContent>
         </Card>
 
-        <Card className="cursor-pointer transition-colors hover:bg-muted/50">
+        <Card className="transition-colors">
           <CardHeader>
             <CardTitle className="text-base">Bill of Materials</CardTitle>
           </CardHeader>
@@ -46,7 +46,7 @@ export default function DesignPage() {
           </CardContent>
         </Card>
 
-        <Card className="cursor-pointer transition-colors hover:bg-muted/50">
+        <Card className="transition-colors">
           <CardHeader>
             <CardTitle className="text-base">Cut List Generator</CardTitle>
           </CardHeader>
@@ -57,7 +57,7 @@ export default function DesignPage() {
           </CardContent>
         </Card>
 
-        <Card className="cursor-pointer transition-colors hover:bg-muted/50">
+        <Card className="transition-colors">
           <CardHeader>
             <CardTitle className="text-base">Customer Portal</CardTitle>
           </CardHeader>
@@ -68,7 +68,7 @@ export default function DesignPage() {
           </CardContent>
         </Card>
 
-        <Card className="cursor-pointer transition-colors hover:bg-muted/50">
+        <Card className="transition-colors">
           <CardHeader>
             <CardTitle className="text-base">CAD Integration</CardTitle>
           </CardHeader>

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { CompanyType } from "@prisma/client";
 import {
   createTRPCRouter,
   protectedProcedure,
@@ -98,9 +99,7 @@ export const crmRouter = createTRPCRouter({
     .input(
       z.object({
         search: z.string().optional(),
-        type: z.nativeEnum(
-          await import("@prisma/client").then((m) => m.CompanyType)
-        ).optional(),
+        type: z.nativeEnum(CompanyType).optional(),
         page: z.number().min(1).default(1),
         pageSize: z.number().min(1).max(100).default(25),
       }).partial()

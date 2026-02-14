@@ -63,7 +63,7 @@ export const inventoryRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      return ctx.db.material.create({ data: input });
+      return ctx.db.material.create({ data: input as any });
     }),
 
   // ── Stock Movements ───────────────────────────────────────

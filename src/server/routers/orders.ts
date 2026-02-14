@@ -43,7 +43,7 @@ export const ordersRouter = createTRPCRouter({
       include: {
         company: true,
         quote: true,
-        orderItems: { orderBy: { sortOrder: "asc" } },
+        orderItems: { orderBy: { sortOrder: "asc" }, include: { job: true } },
         jobs: { include: { operations: true } },
         changeOrders: { orderBy: { createdAt: "desc" } },
         invoices: true,

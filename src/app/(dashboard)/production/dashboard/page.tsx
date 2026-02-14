@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { StatCard } from "@/components/ui/stat-card";
 import { JOB_STATUSES, OPERATIONS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+import { Hammer, Clock, CheckCircle2, Users } from "lucide-react";
 
 export default function ProductionDashboardPage() {
   const { data, isLoading } = trpc.production.workshopDashboard.useQuery();
@@ -20,41 +21,28 @@ export default function ProductionDashboardPage() {
   const qcPending = statusCounts.find((s) => s.status === "QC_PENDING")?.count ?? 0;
 
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title="Workshop Dashboard"
-        description="Real-time production overview."
-      />
+    <div className="space-y-5">
+      <PageHeader title="Workshop Dashboard" description="Real-time production overview." />
 
-      {/* Summary Stats */}
-      <div className="grid gap-4 md:grid-cols-4">
-        <StatCard title="In Progress" value={inProgress} description="Jobs actively being worked" />
-        <StatCard title="Ready to Start" value={readyToStart} description="Waiting for workshop" />
-        <StatCard title="QC Pending" value={qcPending} description="Awaiting quality check" />
-        <StatCard
-          title="Clocked In Today"
-          value={todaysTime.filter((t: any) => !t.clockOut).length}
-          description="Workers on the floor"
-        />
+      <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
+        <StatCard title="In Progress" value={inProgress} description="Jobs actively being worked" icon={<Hammer className="h-5 w-5" />} />
+        <StatCard title="Ready to Start" value={readyToStart} description="Waiting for workshop" icon={<Clock className="h-5 w-5" />} />
+        <StatCard title="QC Pending" value={qcPending} description="Awaiting quality check" icon={<CheckCircle2 className="h-5 w-5" />} />
+        <StatCard title="Clocked In" value={todaysTime.filter((t: any) => !t.clockOut).length} description="Workers on the floor" icon={<Users className="h-5 w-5" />} />
       </div>
 
-      {/* Job Status Overview */}
+      {/* Job Status */}
       <Card>
         <CardHeader>
           <CardTitle>Job Status Overview</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-2">
             {statusCounts.map((s) => {
               const info = (JOB_STATUSES as any)[s.status];
               return (
-                <div
-                  key={s.status}
-                  className="flex items-center gap-2 rounded-lg border px-4 py-2"
-                >
-                  <span className="text-sm font-medium">
-                    {info?.label ?? s.status.replace(/_/g, " ")}
-                  </span>
+                <div key={s.status} className="flex items-center gap-2 rounded-xl bg-muted/40 px-3.5 py-2">
+                  <span className="text-[13px] font-medium">{info?.label ?? s.status.replace(/_/g, " ")}</span>
                   <Badge variant="secondary">{s.count}</Badge>
                 </div>
               );
@@ -70,19 +58,16 @@ export default function ProductionDashboardPage() {
         </CardHeader>
         <CardContent>
           {activeJobs.length === 0 ? (
-            <p className="py-8 text-center text-muted-foreground">
+            <p className="py-10 text-center text-[13px] text-muted-foreground">
               No active jobs. Jobs appear here when they enter production.
             </p>
           ) : (
-            <div className="space-y-3">
+            <div className="divide-y divide-border/30">
               {activeJobs.map((job: any) => (
-                <div
-                  key={job.id}
-                  className="flex items-center justify-between rounded-lg border p-4"
-                >
+                <div key={job.id} className="flex items-center justify-between py-3.5">
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="font-mono text-sm font-medium">{job.jobNumber}</span>
+                      <span className="font-mono text-[12px] font-semibold">{job.jobNumber}</span>
                       <Badge
                         variant={
                           job.priority === "URGENT" ? "destructive" :
@@ -92,23 +77,20 @@ export default function ProductionDashboardPage() {
                         {job.priority}
                       </Badge>
                     </div>
-                    <p className="text-sm text-muted-foreground">
-                      {job.order?.company?.name}
-                    </p>
+                    <p className="mt-0.5 text-[13px] text-muted-foreground">{job.order?.company?.name}</p>
                   </div>
-                  <div className="flex items-center gap-4">
-                    {/* Operations progress */}
+                  <div className="flex items-center gap-3">
                     <div className="flex gap-1">
                       {job.operations.map((op: any) => (
                         <div
                           key={op.id}
-                          title={`${(OPERATIONS as any)[op.operationType] ?? op.operationType}: ${op.status}`}
+                          title={(OPERATIONS as any)[op.operationType] ?? op.operationType + ": " + op.status}
                           className={cn(
-                            "h-6 w-6 rounded text-center text-[10px] leading-6",
+                            "h-6 w-6 rounded-md text-center text-[10px] leading-6 font-semibold",
                             op.status === "COMPLETED"
-                              ? "bg-emerald-100 text-emerald-800"
+                              ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400"
                               : op.status === "IN_PROGRESS"
-                                ? "bg-amber-100 text-amber-800"
+                                ? "bg-amber-50 text-amber-600 dark:bg-amber-950/40 dark:text-amber-400"
                                 : "bg-muted text-muted-foreground"
                           )}
                         >
@@ -130,35 +112,29 @@ export default function ProductionDashboardPage() {
         </CardContent>
       </Card>
 
-      {/* Today's Time Entries */}
+      {/* Today's Time */}
       <Card>
         <CardHeader>
           <CardTitle>Today's Time Log</CardTitle>
         </CardHeader>
         <CardContent>
           {todaysTime.length === 0 ? (
-            <p className="py-8 text-center text-muted-foreground">
-              No time entries today.
-            </p>
+            <p className="py-10 text-center text-[13px] text-muted-foreground">No time entries today.</p>
           ) : (
-            <div className="space-y-2">
+            <div className="divide-y divide-border/30">
               {todaysTime.map((entry: any) => (
-                <div key={entry.id} className="flex items-center justify-between border-b py-2 last:border-0">
+                <div key={entry.id} className="flex items-center justify-between py-3">
                   <div>
                     <span className="font-medium">{entry.user?.name}</span>
                     {entry.job && (
-                      <span className="ml-2 text-sm text-muted-foreground">
-                        on {entry.job.jobNumber}
-                      </span>
+                      <span className="ml-2 text-[13px] text-muted-foreground">on {entry.job.jobNumber}</span>
                     )}
                   </div>
-                  <div className="text-sm">
-                    {entry.clockOut ? (
-                      <Badge variant="secondary">Clocked Out</Badge>
-                    ) : (
-                      <Badge variant="success">Active</Badge>
-                    )}
-                  </div>
+                  {entry.clockOut ? (
+                    <Badge variant="secondary">Clocked Out</Badge>
+                  ) : (
+                    <Badge variant="success">Active</Badge>
+                  )}
                 </div>
               ))}
             </div>

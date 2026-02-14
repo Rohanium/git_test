@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { ChevronRight } from "lucide-react";
 
 interface Column<T> {
   key: string;
@@ -26,62 +27,73 @@ export function DataTable<T extends { id?: string }>({
 }: DataTableProps<T>) {
   if (loading) {
     return (
-      <div className="flex h-48 items-center justify-center text-sm text-muted-foreground">
-        Loading...
+      <div className="flex h-48 items-center justify-center rounded-2xl bg-card shadow-card">
+        <div className="flex items-center gap-3 text-[13px] text-muted-foreground">
+          <div className="h-5 w-5 animate-spin rounded-full border-2 border-muted-foreground/30 border-t-primary" />
+          Loading...
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto rounded-md border">
-      <table className="w-full text-sm">
-        <thead>
-          <tr className="border-b bg-muted/50">
-            {columns.map((col) => (
-              <th
-                key={col.key}
-                className={cn(
-                  "px-4 py-3 text-left font-medium text-muted-foreground",
-                  col.className
-                )}
-              >
-                {col.header}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {data.length === 0 ? (
-            <tr>
-              <td
-                colSpan={columns.length}
-                className="px-4 py-8 text-center text-muted-foreground"
-              >
-                {emptyMessage}
-              </td>
+    <div className="overflow-hidden rounded-2xl bg-card shadow-card">
+      <div className="overflow-x-auto">
+        <table className="w-full text-[13px]">
+          <thead>
+            <tr className="border-b border-border/50">
+              {columns.map((col) => (
+                <th
+                  key={col.key}
+                  className={cn(
+                    "px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground",
+                    col.className
+                  )}
+                >
+                  {col.header}
+                </th>
+              ))}
+              {onRowClick && <th className="w-8" />}
             </tr>
-          ) : (
-            data.map((item, index) => (
-              <tr
-                key={(item as any).id ?? index}
-                onClick={() => onRowClick?.(item)}
-                className={cn(
-                  "border-b transition-colors hover:bg-muted/50",
-                  onRowClick && "cursor-pointer"
-                )}
-              >
-                {columns.map((col) => (
-                  <td key={col.key} className={cn("px-4 py-3", col.className)}>
-                    {col.render
-                      ? col.render(item)
-                      : String((item as any)[col.key] ?? "")}
-                  </td>
-                ))}
+          </thead>
+          <tbody className="divide-y divide-border/30">
+            {data.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={columns.length + (onRowClick ? 1 : 0)}
+                  className="px-5 py-12 text-center text-muted-foreground"
+                >
+                  {emptyMessage}
+                </td>
               </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+            ) : (
+              data.map((item, index) => (
+                <tr
+                  key={(item as any).id ?? index}
+                  onClick={() => onRowClick?.(item)}
+                  className={cn(
+                    "transition-colors hover:bg-muted/30",
+                    onRowClick && "cursor-pointer"
+                  )}
+                >
+                  {columns.map((col) => (
+                    <td key={col.key} className={cn("px-5 py-3.5", col.className)}>
+                      {col.render
+                        ? col.render(item)
+                        : String((item as any)[col.key] ?? "")}
+                    </td>
+                  ))}
+                  {onRowClick && (
+                    <td className="px-3 py-3.5 text-muted-foreground/40">
+                      <ChevronRight className="h-4 w-4" />
+                    </td>
+                  )}
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

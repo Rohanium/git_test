@@ -4,59 +4,67 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* iOS-inspired light palette — clean, airy, subtle depth */
+    --background: 0 0% 96%;
+    --foreground: 0 0% 10%;
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 0 0% 10%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 25 95% 40%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 25 95% 40%;
-    --radius: 0.5rem;
+    --popover-foreground: 0 0% 10%;
+    --primary: 25 90% 48%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 0 0% 20%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 0 0% 45%;
+    --accent: 220 14% 96%;
+    --accent-foreground: 0 0% 20%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 25 90% 48%;
+    --radius: 0.875rem;
 
     /* Joinery-specific */
-    --workshop: 25 30% 92%;
-    --workshop-foreground: 25 80% 20%;
-    --timber: 30 60% 35%;
+    --workshop: 30 25% 95%;
+    --workshop-foreground: 30 50% 25%;
+    --timber: 30 55% 38%;
     --timber-foreground: 30 10% 95%;
+
+    /* iOS glass effect */
+    --glass: rgba(255, 255, 255, 0.72);
+    --glass-border: rgba(0, 0, 0, 0.06);
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 25 90% 50%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 25 90% 50%;
+    --background: 0 0% 7%;
+    --foreground: 0 0% 95%;
+    --card: 0 0% 12%;
+    --card-foreground: 0 0% 95%;
+    --popover: 0 0% 12%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 25 85% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 16%;
+    --secondary-foreground: 0 0% 90%;
+    --muted: 0 0% 16%;
+    --muted-foreground: 0 0% 55%;
+    --accent: 0 0% 16%;
+    --accent-foreground: 0 0% 90%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 18%;
+    --input: 0 0% 18%;
+    --ring: 25 85% 55%;
 
-    --workshop: 25 20% 15%;
-    --workshop-foreground: 25 60% 80%;
+    --workshop: 30 15% 14%;
+    --workshop-foreground: 30 50% 75%;
     --timber: 30 40% 55%;
     --timber-foreground: 30 10% 10%;
+
+    --glass: rgba(30, 30, 30, 0.72);
+    --glass-border: rgba(255, 255, 255, 0.08);
   }
 }
 
@@ -64,7 +72,69 @@
   * {
     @apply border-border;
   }
+
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* iOS-style slim scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 0.2);
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.35);
+  }
+}
+
+@layer utilities {
+  .glass {
+    background: var(--glass);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-color: var(--glass-border);
+  }
+
+  .shadow-card {
+    box-shadow:
+      0 0 0 1px hsl(var(--border) / 0.5),
+      0 1px 3px 0 rgba(0, 0, 0, 0.04),
+      0 2px 8px 0 rgba(0, 0, 0, 0.03);
+  }
+
+  .shadow-card-hover {
+    box-shadow:
+      0 0 0 1px hsl(var(--border) / 0.5),
+      0 2px 8px 0 rgba(0, 0, 0, 0.06),
+      0 4px 16px 0 rgba(0, 0, 0, 0.04);
+  }
+
+  .shadow-elevated {
+    box-shadow:
+      0 0 0 1px hsl(var(--border) / 0.3),
+      0 4px 12px 0 rgba(0, 0, 0, 0.08),
+      0 8px 24px 0 rgba(0, 0, 0, 0.06);
+  }
+
+  .transition-smooth {
+    transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .grouped-inset {
+    @apply rounded-xl bg-card shadow-card overflow-hidden;
   }
 }

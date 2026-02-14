@@ -18,20 +18,20 @@ export function StatCard({
   className,
 }: StatCardProps) {
   return (
-    <div className={cn("rounded-lg border bg-card p-6", className)}>
+    <div className={cn("rounded-2xl bg-card p-5 shadow-card", className)}>
       <div className="flex items-center justify-between">
-        <p className="text-sm font-medium text-muted-foreground">{title}</p>
-        {icon && <div className="text-muted-foreground">{icon}</div>}
+        <p className="text-[13px] font-medium text-muted-foreground">{title}</p>
+        {icon && <div className="text-muted-foreground/60">{icon}</div>}
       </div>
-      <p className="mt-2 text-3xl font-bold">{value}</p>
+      <p className="mt-2 text-2xl font-bold tracking-tight">{value}</p>
       {description && (
-        <p className="mt-1 text-xs text-muted-foreground">{description}</p>
+        <p className="mt-1 text-[12px] text-muted-foreground">{description}</p>
       )}
       {trend && (
         <p
           className={cn(
-            "mt-1 text-xs font-medium",
-            trend.value >= 0 ? "text-emerald-600" : "text-red-600"
+            "mt-1.5 text-[12px] font-semibold",
+            trend.value >= 0 ? "text-emerald-600" : "text-red-500"
           )}
         >
           {trend.value >= 0 ? "+" : ""}

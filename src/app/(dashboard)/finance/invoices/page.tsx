@@ -3,12 +3,12 @@
 import { useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { PageHeader } from "@/components/ui/page-header";
-import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Tabs } from "@/components/ui/tabs";
 import { StatCard } from "@/components/ui/stat-card";
 import { formatCurrency, formatDate } from "@/lib/utils";
+import { DollarSign, CreditCard, TrendingDown } from "lucide-react";
 
 const STATUS_TABS = [
   { key: "all", label: "All" },
@@ -20,14 +20,9 @@ const STATUS_TABS = [
 ];
 
 const statusVariant: Record<string, any> = {
-  DRAFT: "secondary",
-  SENT: "default",
-  VIEWED: "outline",
-  PARTIALLY_PAID: "warning",
-  PAID: "success",
-  OVERDUE: "destructive",
-  CANCELLED: "secondary",
-  VOID: "secondary",
+  DRAFT: "secondary", SENT: "default", VIEWED: "outline",
+  PARTIALLY_PAID: "warning", PAID: "success",
+  OVERDUE: "destructive", CANCELLED: "secondary", VOID: "secondary",
 };
 
 export default function InvoicesPage() {
@@ -45,12 +40,12 @@ export default function InvoicesPage() {
     {
       key: "invoiceNumber",
       header: "Invoice #",
-      render: (inv: any) => <span className="font-mono text-sm font-medium">{inv.invoiceNumber}</span>,
+      render: (inv: any) => <span className="font-mono text-[12px] font-semibold text-muted-foreground">{inv.invoiceNumber}</span>,
     },
     {
       key: "customer",
       header: "Customer",
-      render: (inv: any) => inv.order?.company?.name ?? "—",
+      render: (inv: any) => <span className="text-muted-foreground">{inv.order?.company?.name ?? "\u2014"}</span>,
     },
     {
       key: "type",
@@ -72,7 +67,7 @@ export default function InvoicesPage() {
       key: "amountPaid",
       header: "Paid",
       className: "text-right",
-      render: (inv: any) => formatCurrency(Number(inv.amountPaid)),
+      render: (inv: any) => <span className="text-muted-foreground">{formatCurrency(Number(inv.amountPaid))}</span>,
     },
     {
       key: "dueDate",
@@ -80,7 +75,7 @@ export default function InvoicesPage() {
       render: (inv: any) => {
         const isOverdue = new Date(inv.dueDate) < new Date() && !["PAID", "CANCELLED", "VOID"].includes(inv.status);
         return (
-          <span className={isOverdue ? "font-medium text-destructive" : ""}>
+          <span className={isOverdue ? "font-medium text-red-500" : "text-muted-foreground"}>
             {formatDate(inv.dueDate)}
           </span>
         );
@@ -89,25 +84,13 @@ export default function InvoicesPage() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <PageHeader title="Invoices" description="Manage customer invoices and track payments." />
 
-      <div className="grid gap-4 md:grid-cols-3">
-        <StatCard
-          title="Month Revenue"
-          value={formatCurrency(dashboard?.monthRevenue ?? 0)}
-          description="Payments received this month"
-        />
-        <StatCard
-          title="Outstanding"
-          value={formatCurrency(dashboard?.outstandingReceivables ?? 0)}
-          description="Total receivables"
-        />
-        <StatCard
-          title="Month Expenses"
-          value={formatCurrency(dashboard?.monthExpenses ?? 0)}
-          description="Supplier costs this month"
-        />
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-3">
+        <StatCard title="Month Revenue" value={formatCurrency(dashboard?.monthRevenue ?? 0)} description="Payments received this month" icon={<DollarSign className="h-5 w-5" />} />
+        <StatCard title="Outstanding" value={formatCurrency(dashboard?.outstandingReceivables ?? 0)} description="Total receivables" icon={<CreditCard className="h-5 w-5" />} />
+        <StatCard title="Month Expenses" value={formatCurrency(dashboard?.monthExpenses ?? 0)} description="Supplier costs this month" icon={<TrendingDown className="h-5 w-5" />} />
       </div>
 
       <Tabs
@@ -116,12 +99,7 @@ export default function InvoicesPage() {
         onChange={setActiveTab}
       />
 
-      <DataTable
-        columns={columns}
-        data={data?.invoices ?? []}
-        loading={isLoading}
-        emptyMessage="No invoices yet."
-      />
+      <DataTable columns={columns} data={data?.invoices ?? []} loading={isLoading} emptyMessage="No invoices yet." />
     </div>
   );
 }

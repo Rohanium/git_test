@@ -12,6 +12,7 @@ import { Modal } from "@/components/ui/modal";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { formatCurrency, formatDate } from "@/lib/utils";
+import { Plus } from "lucide-react";
 
 const STATUS_TABS = [
   { key: "all", label: "All" },
@@ -50,7 +51,7 @@ export default function QuotesPage() {
       setShowCreate(false);
       setForm({ title: "", description: "" });
       refetch();
-      router.push(`/quotes/${quote.id}`);
+      router.push("/quotes/" + quote.id);
     },
   });
 
@@ -59,7 +60,7 @@ export default function QuotesPage() {
       key: "quoteNumber",
       header: "Quote #",
       render: (q: any) => (
-        <span className="font-mono text-sm font-medium">{q.quoteNumber}</span>
+        <span className="font-mono text-[12px] font-semibold text-muted-foreground">{q.quoteNumber}</span>
       ),
     },
     {
@@ -69,7 +70,7 @@ export default function QuotesPage() {
         <div>
           <div className="font-medium">{q.title}</div>
           {q.company && (
-            <div className="text-xs text-muted-foreground">{q.company.name}</div>
+            <div className="text-[12px] text-muted-foreground">{q.company.name}</div>
           )}
         </div>
       ),
@@ -84,7 +85,7 @@ export default function QuotesPage() {
     {
       key: "lineItems",
       header: "Items",
-      render: (q: any) => q._count?.lineItems ?? 0,
+      render: (q: any) => <span className="text-muted-foreground">{q._count?.lineItems ?? 0}</span>,
     },
     {
       key: "total",
@@ -97,22 +98,24 @@ export default function QuotesPage() {
     {
       key: "createdAt",
       header: "Created",
-      render: (q: any) => formatDate(q.createdAt),
+      render: (q: any) => <span className="text-muted-foreground">{formatDate(q.createdAt)}</span>,
     },
     {
       key: "createdBy",
       header: "By",
-      render: (q: any) => q.createdBy?.name ?? "—",
+      render: (q: any) => <span className="text-muted-foreground">{q.createdBy?.name ?? "\u2014"}</span>,
     },
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <PageHeader
         title="Quotes"
         description="Create and manage customer quotes with detailed pricing."
         actions={
-          <Button onClick={() => setShowCreate(true)}>+ New Quote</Button>
+          <Button onClick={() => setShowCreate(true)}>
+            <Plus className="mr-1.5 h-4 w-4" /> New Quote
+          </Button>
         }
       />
 
@@ -130,7 +133,7 @@ export default function QuotesPage() {
         data={data?.quotes ?? []}
         loading={isLoading}
         emptyMessage="No quotes yet. Create your first quote to start pricing jobs."
-        onRowClick={(q) => router.push(`/quotes/${q.id}`)}
+        onRowClick={(q) => router.push("/quotes/" + q.id)}
       />
 
       <Modal
@@ -151,7 +154,7 @@ export default function QuotesPage() {
         >
           <Input
             label="Quote Title"
-            placeholder="e.g. Kitchen — Smith Residence"
+            placeholder="e.g. Kitchen \u2014 Smith Residence"
             value={form.title}
             onChange={(e) => setForm({ ...form, title: e.target.value })}
             required
@@ -163,9 +166,7 @@ export default function QuotesPage() {
             placeholder="Brief description of the work..."
           />
           <div className="flex justify-end gap-2 pt-2">
-            <Button variant="outline" type="button" onClick={() => setShowCreate(false)}>
-              Cancel
-            </Button>
+            <Button variant="outline" type="button" onClick={() => setShowCreate(false)}>Cancel</Button>
             <Button type="submit" disabled={createMutation.isPending}>
               {createMutation.isPending ? "Creating..." : "Create Quote"}
             </Button>

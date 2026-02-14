@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 interface Tab {
@@ -17,35 +16,33 @@ interface TabsProps {
 
 export function Tabs({ tabs, activeTab, onChange }: TabsProps) {
   return (
-    <div className="border-b">
-      <nav className="-mb-px flex space-x-6">
-        {tabs.map((tab) => (
-          <button
-            key={tab.key}
-            onClick={() => onChange(tab.key)}
-            className={cn(
-              "whitespace-nowrap border-b-2 px-1 py-3 text-sm font-medium transition-colors",
-              activeTab === tab.key
-                ? "border-primary text-primary"
-                : "border-transparent text-muted-foreground hover:border-muted-foreground/30 hover:text-foreground"
-            )}
-          >
-            {tab.label}
-            {tab.count !== undefined && (
-              <span
-                className={cn(
-                  "ml-2 rounded-full px-2 py-0.5 text-xs",
-                  activeTab === tab.key
-                    ? "bg-primary/10 text-primary"
-                    : "bg-muted text-muted-foreground"
-                )}
-              >
-                {tab.count}
-              </span>
-            )}
-          </button>
-        ))}
-      </nav>
+    <div className="inline-flex rounded-xl bg-muted/60 p-1">
+      {tabs.map((tab) => (
+        <button
+          key={tab.key}
+          onClick={() => onChange(tab.key)}
+          className={cn(
+            "relative rounded-lg px-3.5 py-2 text-[13px] font-medium transition-all duration-200",
+            activeTab === tab.key
+              ? "bg-card text-foreground shadow-card"
+              : "text-muted-foreground hover:text-foreground"
+          )}
+        >
+          {tab.label}
+          {tab.count !== undefined && (
+            <span
+              className={cn(
+                "ml-1.5 text-[11px]",
+                activeTab === tab.key
+                  ? "text-muted-foreground"
+                  : "text-muted-foreground/60"
+              )}
+            >
+              {tab.count}
+            </span>
+          )}
+        </button>
+      ))}
     </div>
   );
 }

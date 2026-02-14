@@ -7,6 +7,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/utils";
 import { PIPELINE_STAGES, JOB_STATUSES } from "@/lib/constants";
+import {
+  TrendingUp,
+  Briefcase,
+  DollarSign,
+  Target,
+  ChevronRight,
+  AlertTriangle,
+} from "lucide-react";
 
 export default function DashboardPage() {
   const { data: kpis } = trpc.reports.executiveKpis.useQuery();
@@ -21,39 +29,44 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
+      {/* Greeting */}
       <div>
-        <h2 className="text-2xl font-bold tracking-tight">Dashboard</h2>
-        <p className="text-muted-foreground">
-          Overview of your joinery business operations.
+        <h2 className="text-xl font-bold tracking-tight">Good morning</h2>
+        <p className="text-[13px] text-muted-foreground">
+          Here's what's happening with your business today.
         </p>
       </div>
 
       {/* Executive KPIs */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
         <StatCard
           title="Pipeline Value"
           value={formatCurrency(kpis?.pipelineValue ?? 0)}
           description={`${kpis?.pipelineCount ?? 0} active opportunities`}
+          icon={<TrendingUp className="h-5 w-5" />}
         />
         <StatCard
           title="Active Jobs"
           value={kpis?.activeJobs ?? 0}
           description="In production"
+          icon={<Briefcase className="h-5 w-5" />}
         />
         <StatCard
           title="YTD Revenue"
           value={formatCurrency(kpis?.yearToDateRevenue ?? 0)}
           description="Year to date"
+          icon={<DollarSign className="h-5 w-5" />}
         />
         <StatCard
           title="Win Rate"
           value={`${kpis?.winRate ?? 0}%`}
           description="Last 90 days"
+          icon={<Target className="h-5 w-5" />}
         />
       </div>
 
       {/* Financial Row */}
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-3">
         <StatCard
           title="Month Revenue"
           value={formatCurrency(finance?.monthRevenue ?? 0)}
@@ -68,33 +81,36 @@ export default function DashboardPage() {
           title="Overdue Invoices"
           value={kpis?.overdueInvoices ?? 0}
           description="Require follow-up"
-          className={(kpis?.overdueInvoices ?? 0) > 0 ? "border-destructive/50" : ""}
+          className={(kpis?.overdueInvoices ?? 0) > 0 ? "ring-1 ring-red-200 dark:ring-red-900" : ""}
         />
       </div>
 
-      {/* Sales Pipeline Mini */}
+      {/* Sales Pipeline */}
       <Card>
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <CardTitle>Sales Pipeline</CardTitle>
-            <Link href="/crm/opportunities" className="text-sm text-primary hover:underline">
-              View All
+            <Link href="/crm/opportunities" className="flex items-center gap-1 text-[13px] font-medium text-primary hover:text-primary/80 transition-smooth">
+              View All <ChevronRight className="h-3.5 w-3.5" />
             </Link>
           </div>
         </CardHeader>
         <CardContent>
-          <div className="flex gap-2">
+          <div className="flex gap-2 overflow-x-auto pb-1">
             {PIPELINE_STAGES.filter((s) => s.key !== "WON" && s.key !== "LOST").map((stage) => {
               const info = pipeline?.find((p) => p.stage === stage.key);
               return (
                 <div
                   key={stage.key}
-                  className="flex-1 rounded-lg border p-3 text-center"
-                  style={{ borderTopColor: stage.color, borderTopWidth: 3 }}
+                  className="flex-1 min-w-[100px] rounded-xl bg-muted/40 p-3 text-center"
                 >
-                  <p className="text-xs text-muted-foreground">{stage.label}</p>
-                  <p className="text-lg font-bold">{info?.count ?? 0}</p>
-                  <p className="text-xs text-muted-foreground">
+                  <div
+                    className="mx-auto mb-2 h-1 w-8 rounded-full"
+                    style={{ backgroundColor: stage.color }}
+                  />
+                  <p className="text-[11px] font-medium text-muted-foreground">{stage.label}</p>
+                  <p className="mt-0.5 text-lg font-bold">{info?.count ?? 0}</p>
+                  <p className="text-[11px] text-muted-foreground">
                     {formatCurrency(Number(info?.totalValue ?? 0))}
                   </p>
                 </div>
@@ -104,33 +120,38 @@ export default function DashboardPage() {
         </CardContent>
       </Card>
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-4 lg:grid-cols-2">
         {/* Recent Quotes */}
         <Card>
-          <CardHeader className="pb-3">
+          <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
               <CardTitle>Recent Quotes</CardTitle>
-              <Link href="/quotes" className="text-sm text-primary hover:underline">View All</Link>
+              <Link href="/quotes" className="flex items-center gap-1 text-[13px] font-medium text-primary hover:text-primary/80 transition-smooth">
+                View All <ChevronRight className="h-3.5 w-3.5" />
+              </Link>
             </div>
           </CardHeader>
           <CardContent>
             {!recentQuotes?.quotes?.length ? (
-              <p className="py-4 text-center text-sm text-muted-foreground">No quotes yet.</p>
+              <p className="py-6 text-center text-[13px] text-muted-foreground">No quotes yet.</p>
             ) : (
-              <div className="space-y-3">
+              <div className="divide-y divide-border/30">
                 {recentQuotes.quotes.map((q: any) => (
                   <Link
                     key={q.id}
                     href={`/quotes/${q.id}`}
-                    className="flex items-center justify-between rounded-md border p-3 transition-colors hover:bg-muted/50"
+                    className="flex items-center justify-between py-3 transition-colors hover:bg-muted/20 -mx-2 px-2 rounded-xl"
                   >
                     <div>
-                      <span className="font-mono text-xs text-muted-foreground">{q.quoteNumber}</span>
-                      <p className="text-sm font-medium">{q.title}</p>
+                      <span className="font-mono text-[11px] text-muted-foreground">{q.quoteNumber}</span>
+                      <p className="text-[13px] font-medium">{q.title}</p>
                     </div>
-                    <div className="text-right">
-                      <p className="font-semibold">{formatCurrency(Number(q.total))}</p>
-                      <Badge variant="outline" className="text-xs">{q.status}</Badge>
+                    <div className="flex items-center gap-3">
+                      <div className="text-right">
+                        <p className="text-[13px] font-semibold">{formatCurrency(Number(q.total))}</p>
+                        <Badge variant="outline" className="text-[10px]">{q.status}</Badge>
+                      </div>
+                      <ChevronRight className="h-4 w-4 text-muted-foreground/40" />
                     </div>
                   </Link>
                 ))}
@@ -141,22 +162,24 @@ export default function DashboardPage() {
 
         {/* Workshop Status */}
         <Card>
-          <CardHeader className="pb-3">
+          <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
               <CardTitle>Workshop Status</CardTitle>
-              <Link href="/production/dashboard" className="text-sm text-primary hover:underline">View All</Link>
+              <Link href="/production/dashboard" className="flex items-center gap-1 text-[13px] font-medium text-primary hover:text-primary/80 transition-smooth">
+                View All <ChevronRight className="h-3.5 w-3.5" />
+              </Link>
             </div>
           </CardHeader>
           <CardContent>
             {!workshop?.activeJobs?.length ? (
-              <p className="py-4 text-center text-sm text-muted-foreground">No active jobs.</p>
+              <p className="py-6 text-center text-[13px] text-muted-foreground">No active jobs.</p>
             ) : (
-              <div className="space-y-3">
+              <div className="divide-y divide-border/30">
                 {workshop.activeJobs.slice(0, 5).map((job: any) => (
-                  <div key={job.id} className="flex items-center justify-between rounded-md border p-3">
+                  <div key={job.id} className="flex items-center justify-between py-3">
                     <div>
-                      <span className="font-mono text-xs">{job.jobNumber}</span>
-                      <p className="text-sm">{job.order?.company?.name}</p>
+                      <span className="font-mono text-[11px] font-medium">{job.jobNumber}</span>
+                      <p className="text-[13px] text-muted-foreground">{job.order?.company?.name}</p>
                     </div>
                     <Badge
                       variant={
@@ -175,22 +198,24 @@ export default function DashboardPage() {
 
         {/* Upcoming Deliveries */}
         <Card>
-          <CardHeader className="pb-3">
+          <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
               <CardTitle>Upcoming Deliveries</CardTitle>
-              <Link href="/delivery/deliveries" className="text-sm text-primary hover:underline">View All</Link>
+              <Link href="/delivery/deliveries" className="flex items-center gap-1 text-[13px] font-medium text-primary hover:text-primary/80 transition-smooth">
+                View All <ChevronRight className="h-3.5 w-3.5" />
+              </Link>
             </div>
           </CardHeader>
           <CardContent>
             {!deliveries?.deliveries?.length ? (
-              <p className="py-4 text-center text-sm text-muted-foreground">No deliveries scheduled.</p>
+              <p className="py-6 text-center text-[13px] text-muted-foreground">No deliveries scheduled.</p>
             ) : (
-              <div className="space-y-3">
+              <div className="divide-y divide-border/30">
                 {deliveries.deliveries.slice(0, 5).map((d: any) => (
-                  <div key={d.id} className="flex items-center justify-between rounded-md border p-3">
+                  <div key={d.id} className="flex items-center justify-between py-3">
                     <div>
-                      <span className="font-mono text-xs">{d.deliveryNumber}</span>
-                      <p className="text-sm">{d.order?.company?.name}</p>
+                      <span className="font-mono text-[11px] font-medium">{d.deliveryNumber}</span>
+                      <p className="text-[13px] text-muted-foreground">{d.order?.company?.name}</p>
                     </div>
                     <Badge variant="outline">{d.status}</Badge>
                   </div>
@@ -202,28 +227,42 @@ export default function DashboardPage() {
 
         {/* Low Stock Alerts */}
         <Card>
-          <CardHeader className="pb-3">
+          <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
-              <CardTitle>Low Stock Alerts</CardTitle>
-              <Link href="/inventory/stock" className="text-sm text-primary hover:underline">View All</Link>
+              <CardTitle className="flex items-center gap-2">
+                Low Stock Alerts
+                {lowStockItems.length > 0 && (
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-red-100 text-[10px] font-bold text-red-600 dark:bg-red-950 dark:text-red-400">
+                    {lowStockItems.length}
+                  </span>
+                )}
+              </CardTitle>
+              <Link href="/inventory/stock" className="flex items-center gap-1 text-[13px] font-medium text-primary hover:text-primary/80 transition-smooth">
+                View All <ChevronRight className="h-3.5 w-3.5" />
+              </Link>
             </div>
           </CardHeader>
           <CardContent>
             {lowStockItems.length === 0 ? (
-              <p className="py-4 text-center text-sm text-muted-foreground">All stock levels OK.</p>
+              <p className="py-6 text-center text-[13px] text-muted-foreground">All stock levels OK.</p>
             ) : (
-              <div className="space-y-3">
+              <div className="divide-y divide-border/30">
                 {lowStockItems.slice(0, 5).map((item) => (
-                  <div key={item.id} className="flex items-center justify-between rounded-md border border-destructive/30 p-3">
-                    <div>
-                      <span className="font-mono text-xs">{item.sku}</span>
-                      <p className="text-sm font-medium">{item.name}</p>
+                  <div key={item.id} className="flex items-center justify-between py-3">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-50 dark:bg-red-950/30">
+                        <AlertTriangle className="h-4 w-4 text-red-500" />
+                      </div>
+                      <div>
+                        <p className="text-[13px] font-medium">{item.name}</p>
+                        <span className="font-mono text-[11px] text-muted-foreground">{item.sku}</span>
+                      </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-semibold text-destructive">
+                      <p className="text-[13px] font-semibold text-red-500">
                         {item.totalQuantity.toFixed(1)} {item.unit}
                       </p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-[11px] text-muted-foreground">
                         Reorder at {item.reorderPoint}
                       </p>
                     </div>

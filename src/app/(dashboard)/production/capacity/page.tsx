@@ -269,17 +269,17 @@ function utilPct(booked: number, available: number): number {
 }
 
 function heatColor(pct: number): string {
-  if (pct >= 90) return "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300";
-  if (pct >= 80) return "bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-300";
-  if (pct >= 60) return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300";
-  return "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300";
+  if (pct >= 90) return "bg-red-50 text-red-600 dark:bg-red-950/40 dark:text-red-400";
+  if (pct >= 80) return "bg-orange-50 text-orange-600 dark:bg-orange-950/40 dark:text-orange-400";
+  if (pct >= 60) return "bg-yellow-50 text-yellow-600 dark:bg-yellow-950/40 dark:text-yellow-400";
+  return "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400";
 }
 
 function dayUtilColor(pct: number): string {
-  if (pct >= 90) return "bg-red-50 border-red-200 dark:bg-red-950/30 dark:border-red-800";
-  if (pct >= 80) return "bg-orange-50 border-orange-200 dark:bg-orange-950/30 dark:border-orange-800";
-  if (pct >= 60) return "bg-yellow-50 border-yellow-200 dark:bg-yellow-950/30 dark:border-yellow-800";
-  return "bg-emerald-50 border-emerald-200 dark:bg-emerald-950/30 dark:border-emerald-800";
+  if (pct >= 90) return "bg-red-50/60 border-red-200/60 dark:bg-red-950/20 dark:border-red-800/40";
+  if (pct >= 80) return "bg-orange-50/60 border-orange-200/60 dark:bg-orange-950/20 dark:border-orange-800/40";
+  if (pct >= 60) return "bg-yellow-50/60 border-yellow-200/60 dark:bg-yellow-950/20 dark:border-yellow-800/40";
+  return "bg-emerald-50/60 border-emerald-200/60 dark:bg-emerald-950/20 dark:border-emerald-800/40";
 }
 
 function confidenceBadge(level: "HIGH" | "MEDIUM" | "LOW") {
@@ -488,7 +488,7 @@ export default function CapacityPlanningPage() {
                             type="button"
                             onClick={() => setSelectedWorkstation(ws.workstation)}
                             className={cn(
-                              "flex w-full flex-col items-center justify-center rounded px-2 py-1.5 text-xs font-medium transition-colors hover:ring-2 hover:ring-ring",
+                              "flex w-full flex-col items-center justify-center rounded-lg px-2 py-1.5 text-[11px] font-semibold transition-all duration-150 hover:ring-2 hover:ring-ring/30 hover:scale-[1.02]",
                               heatColor(pct)
                             )}
                             title={`${ws.workstation} -- Week of ${WEEK_LABELS[idx]}: ${pct}% utilised`}
@@ -691,7 +691,7 @@ export default function CapacityPlanningPage() {
                 <div
                   key={day.date}
                   className={cn(
-                    "rounded-lg border p-3 text-sm",
+                    "rounded-xl border p-3 text-[13px]",
                     dayUtilColor(pct)
                   )}
                 >
@@ -713,7 +713,7 @@ export default function CapacityPlanningPage() {
                   </p>
                   <div className="mt-2 space-y-1">
                     {day.jobs.map((job, jIdx) => (
-                      <div key={jIdx} className="rounded bg-card/80 px-2 py-1 text-xs">
+                      <div key={jIdx} className="rounded-lg bg-card/80 px-2 py-1 text-[11px]">
                         <span className="font-mono font-medium">{job.jobNumber}</span>
                         <span className="mx-1 text-muted-foreground">--</span>
                         <span>{job.operation}</span>

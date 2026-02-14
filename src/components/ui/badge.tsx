@@ -7,19 +7,19 @@ interface BadgeProps {
 }
 
 const variantStyles = {
-  default: "bg-primary text-primary-foreground",
+  default: "bg-primary/15 text-primary",
   secondary: "bg-secondary text-secondary-foreground",
-  destructive: "bg-destructive text-destructive-foreground",
-  outline: "border border-input bg-background text-foreground",
-  success: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200",
-  warning: "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200",
+  destructive: "bg-red-50 text-red-600 dark:bg-red-950/40 dark:text-red-400",
+  outline: "border border-border bg-card text-foreground shadow-card",
+  success: "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400",
+  warning: "bg-amber-50 text-amber-600 dark:bg-amber-950/40 dark:text-amber-400",
 };
 
 export function Badge({ children, variant = "default", className }: BadgeProps) {
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
+        "inline-flex items-center rounded-lg px-2 py-0.5 text-[11px] font-semibold",
         variantStyles[variant],
         className
       )}

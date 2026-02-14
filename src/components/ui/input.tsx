@@ -11,21 +11,21 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div>
         {label && (
-          <label htmlFor={id} className="mb-1.5 block text-sm font-medium">
+          <label htmlFor={id} className="mb-1.5 block text-[13px] font-medium text-foreground/80">
             {label}
           </label>
         )}
         <input
           id={id}
           className={cn(
-            "h-10 w-full rounded-md border border-input bg-background px-3 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
-            error && "border-destructive focus:ring-destructive",
+            "h-10 w-full rounded-xl border-0 bg-muted/60 px-3.5 text-[13px] ring-offset-background placeholder:text-muted-foreground/50 focus:bg-muted focus:outline-none focus:ring-2 focus:ring-ring/20 disabled:cursor-not-allowed disabled:opacity-50 transition-smooth",
+            error && "ring-2 ring-destructive/30 focus:ring-destructive/50",
             className
           )}
           ref={ref}
           {...props}
         />
-        {error && <p className="mt-1 text-xs text-destructive">{error}</p>}
+        {error && <p className="mt-1 text-[12px] text-destructive">{error}</p>}
       </div>
     );
   }

@@ -5,7 +5,8 @@
   "description": "Enterprise CRM/ERP system for custom joinery design and manufacturing",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "postinstall": "prisma generate",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
     "db:migrate": "prisma migrate dev",

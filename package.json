@@ -4,7 +4,7 @@
   "private": true,
   "description": "Enterprise CRM/ERP system for custom joinery design and manufacturing",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -H 0.0.0.0",
     "postinstall": "prisma generate",
     "build": "prisma generate && next build",
     "start": "next start",
